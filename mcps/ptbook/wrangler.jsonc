@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ptbook-mcp",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ptbook-healine",
+      "database_id": "e7252667-a9a1-4fab-a946-bf775e40a360"
+    }
+  ],
+  "vars": {
+    "PTBOOK_VISION_MODEL": "gpt-4.1-mini",
+    "PTBOOK_DUMP_AS_OF": "2026-11-07T04:27:35.308Z"
+  }
+}

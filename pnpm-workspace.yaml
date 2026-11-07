@@ -38,6 +38,8 @@ allowBuilds:
   onnxruntime-node: false
   protobufjs: false
   sharp: false
+  core-js-pure: false
+  workerd: true
 onlyBuiltDependencies:
   - esbuild
 ignoredBuiltDependencies:

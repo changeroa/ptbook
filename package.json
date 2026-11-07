@@ -13,9 +13,12 @@
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.3.282",
     "@guuey/config": "0.34.0",
-    "@guuey/worker": "0.34.0"
+    "@guuey/worker": "0.34.0",
+    "zod": "^4.0.0"
   },
   "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^22.0.0",
     "@ggui-ai/cli": "0.29.0",
     "@guuey/cli": "0.34.0",
     "tsup": "^8.5.0",
