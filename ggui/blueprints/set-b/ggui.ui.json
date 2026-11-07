@@ -288,6 +288,15 @@
             ],
             "additionalProperties": false
           }
+        },
+        "presentation": {
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "concise-v2"
+            ]
+          }
         }
       }
     },

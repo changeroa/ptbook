@@ -17,17 +17,15 @@
           "useCase": "plan",
           "logicalId": "plan-A",
           "layout": "ledger-confirm",
-          "locale": "ko-KR"
+          "locale": "ko-KR",
+          "presentation": "concise-v2"
         },
         "seedPrompt": "오늘 계획표: 현재 계획 행과 제안 계획을 전후 비교로 보여주고 적용/유지 확인을 받는다"
       },
-      "actions": [
-        "apply_plan",
-        "keep_plan"
-      ],
-      "contractHash": "b29f5042a9acd352",
-      "variantKey": "c6e78f09324971bf",
-      "codeRef": "daf42bc6746d2bc00262b32f994527639c18c9897bff09e5c25f678213826265.tsx",
+      "actions": [],
+      "contractHash": "529366b415ae3746",
+      "variantKey": "c7f7e247ecc094ba",
+      "codeRef": "ae5015547ab89190d93046d84bc1ba36d659e49925697770547790da6e607c08.tsx",
       "blueprintId": null,
       "registeredAt": null
     },
@@ -46,16 +44,15 @@
           "useCase": "sleep",
           "logicalId": "sleep-B",
           "layout": "metric-intensity-picker",
-          "locale": "ko-KR"
+          "locale": "ko-KR",
+          "presentation": "concise-v2"
         },
         "seedPrompt": "수면 카드 B 오늘 강도부터: 총 수면과 효율을 크게, 강도 선택 칩과 계획 제안 버튼"
       },
-      "actions": [
-        "propose_plan"
-      ],
-      "contractHash": "e879e65e8ada24ba",
-      "variantKey": "4a2a00195b9e0dd1",
-      "codeRef": "0734a709c345e13aa95413eb11b3d2b3127a5d9ee2ad4cefc2df332eebe8aed7.tsx",
+      "actions": [],
+      "contractHash": "0d6193dd9691d68e",
+      "variantKey": "5092ddff3b863643",
+      "codeRef": "49e05a831f9df8b6612c5e871c3150e9ab73ab457d2b894d15a212fc7a0b3d11.tsx",
       "blueprintId": null,
       "registeredAt": null
     },
@@ -74,14 +71,15 @@
           "useCase": "set",
           "logicalId": "set-B",
           "layout": "set-media-links",
-          "locale": "ko-KR"
+          "locale": "ko-KR",
+          "presentation": "concise-v2"
         },
         "seedPrompt": "세트 저장 결과와 다음 행동, 실제 동작하는 영상 업로드와 분석 링크"
       },
       "actions": [],
-      "contractHash": "9a2ec961e2956938",
-      "variantKey": "e19b234338d44bda",
-      "codeRef": "591753c8706ff2d3d3cb338836307d605d769a869c60ac27604c2045dd8aa6d9.tsx",
+      "contractHash": "86cbb68e098aa19f",
+      "variantKey": "cb97a644ae40f075",
+      "codeRef": "05741e42e907aae4c3187d91ef9bdd5173eedfed9c17e5bfcd079434dc265d8b.tsx",
       "blueprintId": null,
       "registeredAt": null
     },
@@ -100,16 +98,15 @@
           "useCase": "video",
           "logicalId": "video-A",
           "layout": "timeline-clips",
-          "locale": "ko-KR"
+          "locale": "ko-KR",
+          "presentation": "concise-v2"
         },
         "seedPrompt": "영상 카드 A 구간을 콕 집어: 참고 구간 타임라인과 원본 열기 링크, 내 영상 분석 미지원 표시"
       },
-      "actions": [
-        "open_clip"
-      ],
-      "contractHash": "2c46ff7d6a13c009",
-      "variantKey": "60c1fb765224dabc",
-      "codeRef": "dccea1f96da1f3f5e128afd7abd8e91d8c513acb1987a722e055c5548bbf2448.tsx",
+      "actions": [],
+      "contractHash": "631726764553b31d",
+      "variantKey": "bb816cf4511cfc8a",
+      "codeRef": "63065f1db542d90597d6d2f00a541ad9de881acd6ac49c8ba0761319d9f37a90.tsx",
       "blueprintId": null,
       "registeredAt": null
     },
@@ -128,14 +125,15 @@
           "useCase": "diet",
           "logicalId": "diet-A",
           "layout": "kcal-first-edit",
-          "locale": "ko-KR"
+          "locale": "ko-KR",
+          "presentation": "concise-v2"
         },
         "seedPrompt": "선 기록 후 수정: 칼로리를 크게, 탄단지와 오늘 누적, 인라인 수정"
       },
       "actions": [],
-      "contractHash": "97a2936b28454820",
-      "variantKey": "6832aa9eb43802bd",
-      "codeRef": "81060b86863bdb10f9ea16c6502c7b96998958bd81b458d04f25c44fbea3cf99.tsx",
+      "contractHash": "559eaf036472bfe4",
+      "variantKey": "22d3bd148f00390c",
+      "codeRef": "945ae283316dcfd085cc9042e895c99be4287e755ab6f14bffa7ae25d9ce7936.tsx",
       "blueprintId": null,
       "registeredAt": null
     },

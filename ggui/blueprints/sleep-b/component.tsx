@@ -196,9 +196,6 @@ function IntensityPicker({
 }
 
 function ReadyBody({ sleep, recommendation, thresholds }: Pick<SleepBProps, "sleep" | "recommendation" | "thresholds">) {
-  const proposePlan = useAction<ProposePlanPayload>("propose_plan");
-  const [intensity, setIntensity] = useState<Intensity>(recommendation.intensity);
-  const [submitted, setSubmitted] = useState(false);
 
   const belowTotal =
     sleep.totalMinutes !== null &&
@@ -212,50 +209,19 @@ function ReadyBody({ sleep, recommendation, thresholds }: Pick<SleepBProps, "sle
   return (
     <Stack gap="lg">
       <Row gap="lg" align="end" wrap>
-        <HeroMetric value={sleep.totalMinutes} label={`${sleep.date} 총 수면`} />
+        <HeroMetric value={sleep.totalMinutes} label="총 수면" />
         <SubMetric value={sleep.efficiencyPct} unit="%" label="효율" />
       </Row>
       <Row gap="lg" wrap>
         <SubMetric value={sleep.deepMinutes} unit="min" label="깊은 잠" />
         <SubMetric value={sleep.remMinutes} unit="min" label="REM" />
       </Row>
-      {thresholds ? (
-        <Text size="sm" tone="muted" style={{ fontVariantNumeric: "tabular-nums" }}>
-          기준
-          {thresholds.minTotalMinutes !== undefined ? ` · 총 수면 ${fmtMinutes(thresholds.minTotalMinutes)} 이상` : ""}
-          {thresholds.minEfficiencyPct !== undefined ? ` · 효율 ${fmtPct(thresholds.minEfficiencyPct)}% 이상` : ""}
-          {belowTotal || belowEff ? " · 오늘은 기준 아래" : ""}
-        </Text>
-      ) : null}
 
       <Card surface="sunken" padding="md" radius="md" shadow="none">
         <Stack gap="md">
           <Stack gap="xs">
             <Heading level={3}>{recommendation.label}</Heading>
-            <Text size="sm">{recommendation.reason}</Text>
           </Stack>
-          <IntensityPicker value={intensity} onChange={setIntensity} disabled={submitted} />
-          <Button
-            variant="primary"
-            size="lg"
-            fullWidth
-            style={PRIMARY_ACTION_STYLE}
-            disabled={submitted}
-            loading={submitted}
-            aria-disabled={submitted}
-            onPress={() => {
-              if (submitted) return;
-              setSubmitted(true);
-              proposePlan({ sleepDate: sleep.date, intensity });
-            }}
-          >
-            {INTENSITY_LABEL[intensity]}로 오늘 계획 만들기
-          </Button>
-          {submitted ? (
-            <div role="status" aria-live="polite"><Text size="sm" tone="muted">
-              계획을 만드는 중이에요. 완료되면 계획표 카드가 나타나요
-            </Text></div>
-          ) : null}
         </Stack>
       </Card>
     </Stack>
@@ -294,7 +260,6 @@ export default function SleepBCard(props: SleepBProps) {
     <div lang="ko" style={ROOT_STYLE} data-blueprint="ptbook:sleep-B">
       <Card padding="lg" radius="lg" shadow="none" border>
         <Stack gap="md">
-          <SourceRow sourceLabel={sourceLabel} dataMode={dataMode} />
           <Heading level={2}>{title}</Heading>
           {body}
         </Stack>

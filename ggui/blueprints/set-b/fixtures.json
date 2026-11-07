@@ -2,8 +2,8 @@
   "variant": "set-B",
   "dataMode": "sample",
   "status": "ready",
-  "title": "다음 세트는 2.5kg 낮추고 무릎 방향만 보세요",
-  "sourceLabel": "샘플 기록 · 오늘 계획 1행",
+  "title": "스쿼트",
+  "sourceLabel": "",
   "record": {
     "id": "set_sample_01",
     "occurredAt": "2026-11-07T05:02:00Z",
@@ -41,5 +41,6 @@
     "sampleUrl": "https://ptbook-mcp.changeroa.workers.dev/upload?token=fixture&kind=squat&ready=1",
     "analysisUrl": null,
     "objectKey": null
-  }
+  },
+  "presentation": "concise-v2"
 }

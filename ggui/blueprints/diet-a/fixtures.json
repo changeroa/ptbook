@@ -3,8 +3,8 @@
   "flow": "record-first",
   "dataMode": "sample",
   "status": "ready",
-  "title": "520kcal 기록했어요",
-  "sourceLabel": "샘플 식사",
+  "title": "식사 기록",
+  "sourceLabel": "",
   "date": "2026-11-07",
   "totals": {
     "kcal": 1240,
@@ -29,5 +29,6 @@
     "occurredAt": "2026-11-07T03:00:00Z",
     "corrected": false
   },
-  "editUrl": null
+  "uploadUrl": "https://ptbook-mcp.changeroa.workers.dev/upload?token=fixture&kind=meal",
+  "presentation": "concise-v2"
 }

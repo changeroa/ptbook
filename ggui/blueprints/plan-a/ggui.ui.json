@@ -20,47 +20,99 @@
         "variant": {
           "description": "논리 variant ID. 항상 plan-A.",
           "required": true,
-          "schema": { "type": "string", "enum": ["plan-A"] }
+          "schema": {
+            "type": "string",
+            "enum": [
+              "plan-A"
+            ]
+          }
         },
         "dataMode": {
           "description": "데이터 출처 유형. 카드가 출처 배지로 표시한다.",
           "required": true,
-          "schema": { "type": "string", "enum": ["live", "imported", "sample", "estimated"] }
+          "schema": {
+            "type": "string",
+            "enum": [
+              "live",
+              "imported",
+              "sample",
+              "estimated"
+            ]
+          }
         },
         "status": {
           "description": "카드 shell 상태. loading/empty/error는 같은 shell 안에서 바뀐다.",
           "required": true,
-          "schema": { "type": "string", "enum": ["ready", "loading", "empty", "error"] }
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "loading",
+              "empty",
+              "error"
+            ]
+          }
         },
         "statusText": {
           "description": "loading/empty/error일 때 사용자에게 보여줄 한 줄 설명.",
-          "schema": { "type": "string", "maxLength": 200 }
+          "schema": {
+            "type": "string",
+            "maxLength": 200
+          }
         },
         "title": {
           "description": "결론 한 문장 (예: 오늘은 하체 3종, 총 부하 10% 낮춤).",
           "required": true,
-          "schema": { "type": "string", "maxLength": 120 }
+          "schema": {
+            "type": "string",
+            "maxLength": 120
+          }
         },
         "sourceLabel": {
           "description": "출처와 기준 (예: 11/7 계획 · 11/6 수면 기준).",
           "required": true,
-          "schema": { "type": "string", "maxLength": 120 }
+          "schema": {
+            "type": "string",
+            "maxLength": 120
+          }
         },
         "date": {
           "description": "계획 날짜 YYYY-MM-DD (Asia/Seoul).",
           "required": true,
-          "schema": { "type": "string", "format": "date" }
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
         },
         "current": {
           "description": "현재 적용된 계획. 없으면 null.",
           "required": true,
           "schema": {
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "properties": {
-              "id": { "type": "string" },
-              "date": { "type": "string", "format": "date" },
-              "revision": { "type": "integer", "minimum": 0 },
-              "status": { "type": "string", "enum": ["draft", "applied", "in_progress", "completed"] },
+              "id": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "draft",
+                  "applied",
+                  "in_progress",
+                  "completed"
+                ]
+              },
               "rows": {
                 "type": "array",
                 "minItems": 1,
@@ -68,32 +120,95 @@
                 "items": {
                   "type": "object",
                   "properties": {
-                    "id": { "type": "string" },
-                    "exercise": { "type": "string" },
-                    "sets": { "type": "integer", "minimum": 1, "maximum": 5 },
-                    "targetKg": { "type": ["number", "null"], "minimum": 0, "maximum": 300 },
-                    "targetReps": { "type": "integer", "minimum": 1, "maximum": 30 },
-                    "completedSets": { "type": "integer", "minimum": 0, "maximum": 30 }
+                    "id": {
+                      "type": "string"
+                    },
+                    "exercise": {
+                      "type": "string"
+                    },
+                    "sets": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 5
+                    },
+                    "targetKg": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0,
+                      "maximum": 300
+                    },
+                    "targetReps": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 30
+                    },
+                    "completedSets": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 30
+                    }
                   },
-                  "required": ["id", "exercise", "sets", "targetKg", "targetReps", "completedSets"]
+                  "required": [
+                    "id",
+                    "exercise",
+                    "sets",
+                    "targetKg",
+                    "targetReps",
+                    "completedSets"
+                  ]
                 }
               },
-              "reason": { "type": "string" },
-              "sleepDate": { "type": ["string", "null"] }
+              "reason": {
+                "type": "string"
+              },
+              "sleepDate": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             },
-            "required": ["id", "date", "revision", "status", "rows", "reason"]
+            "required": [
+              "id",
+              "date",
+              "revision",
+              "status",
+              "rows",
+              "reason"
+            ]
           }
         },
         "candidate": {
           "description": "확인 대기 중인 제안 계획 (status draft). 없으면 null. 있으면 current와 전후 비교를 보여주고 apply_plan/keep_plan을 받는다.",
           "required": true,
           "schema": {
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "properties": {
-              "id": { "type": "string" },
-              "date": { "type": "string", "format": "date" },
-              "revision": { "type": "integer", "minimum": 0 },
-              "status": { "type": "string", "enum": ["draft", "applied", "in_progress", "completed"] },
+              "id": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "draft",
+                  "applied",
+                  "in_progress",
+                  "completed"
+                ]
+              },
               "rows": {
                 "type": "array",
                 "minItems": 1,
@@ -101,20 +216,64 @@
                 "items": {
                   "type": "object",
                   "properties": {
-                    "id": { "type": "string" },
-                    "exercise": { "type": "string" },
-                    "sets": { "type": "integer", "minimum": 1, "maximum": 5 },
-                    "targetKg": { "type": ["number", "null"], "minimum": 0, "maximum": 300 },
-                    "targetReps": { "type": "integer", "minimum": 1, "maximum": 30 },
-                    "completedSets": { "type": "integer", "minimum": 0, "maximum": 30 }
+                    "id": {
+                      "type": "string"
+                    },
+                    "exercise": {
+                      "type": "string"
+                    },
+                    "sets": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 5
+                    },
+                    "targetKg": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0,
+                      "maximum": 300
+                    },
+                    "targetReps": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 30
+                    },
+                    "completedSets": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 30
+                    }
                   },
-                  "required": ["id", "exercise", "sets", "targetKg", "targetReps", "completedSets"]
+                  "required": [
+                    "id",
+                    "exercise",
+                    "sets",
+                    "targetKg",
+                    "targetReps",
+                    "completedSets"
+                  ]
                 }
               },
-              "reason": { "type": "string" },
-              "sleepDate": { "type": ["string", "null"] }
+              "reason": {
+                "type": "string"
+              },
+              "sleepDate": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             },
-            "required": ["id", "date", "revision", "status", "rows", "reason"]
+            "required": [
+              "id",
+              "date",
+              "revision",
+              "status",
+              "rows",
+              "reason"
+            ]
           }
         },
         "confirmation": {
@@ -123,48 +282,37 @@
           "schema": {
             "type": "object",
             "properties": {
-              "state": { "type": "string", "enum": ["idle", "pending", "applied", "kept", "stale"] },
-              "message": { "type": "string", "maxLength": 200 }
+              "state": {
+                "type": "string",
+                "enum": [
+                  "idle",
+                  "pending",
+                  "applied",
+                  "kept",
+                  "stale"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "maxLength": 200
+              }
             },
-            "required": ["state"]
+            "required": [
+              "state"
+            ]
+          }
+        },
+        "presentation": {
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "concise-v2"
+            ]
           }
         }
       }
     },
-    "actionSpec": {
-      "apply_plan": {
-        "label": "이 계획 적용",
-        "description": "사용자가 candidate 계획을 적용하기로 확인했다. agent는 expectedRevision이 최신인지 확인한 뒤 계획 적용 도구를 호출하고, 결과로 같은 카드를 amend한다.",
-        "confirm": true,
-        "oneShot": true,
-        "schema": {
-          "type": "object",
-          "properties": {
-            "candidateId": { "type": "string" },
-            "expectedRevision": { "type": "integer", "minimum": 0 },
-            "date": { "type": "string", "format": "date" }
-          },
-          "required": ["candidateId", "expectedRevision", "date"],
-          "additionalProperties": false
-        },
-        "example": { "candidateId": "plan_sample_002", "expectedRevision": 1, "date": "2026-11-07" }
-      },
-      "keep_plan": {
-        "label": "기존 계획 유지",
-        "description": "사용자가 제안을 거절하고 현재 계획을 유지한다. agent는 candidate를 버리고 같은 카드를 amend한다.",
-        "oneShot": true,
-        "schema": {
-          "type": "object",
-          "properties": {
-            "candidateId": { "type": "string" },
-            "expectedRevision": { "type": "integer", "minimum": 0 },
-            "date": { "type": "string", "format": "date" }
-          },
-          "required": ["candidateId", "expectedRevision", "date"],
-          "additionalProperties": false
-        },
-        "example": { "candidateId": "plan_sample_002", "expectedRevision": 1, "date": "2026-11-07" }
-      }
-    }
+    "actionSpec": {}
   }
 }

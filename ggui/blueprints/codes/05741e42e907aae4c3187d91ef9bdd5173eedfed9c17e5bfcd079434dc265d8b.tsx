@@ -4,15 +4,21 @@
  * body is compiled in isolation by guuey deploy. Every colour, size and
  * spacing is a --ggui-* theme token or a design primitive prop.
  */
-import { useState, type ReactNode } from "react";
-import { Badge, Button, Card, Heading, Progress, Row, Skeleton, Stack, Text } from "@ggui-ai/design";
-import { useAction } from "@ggui-ai/wire";
+import { type ReactNode } from "react";
+import { Badge, Card, Heading, Progress, Row, Skeleton, Stack, Text } from "@ggui-ai/design";
 
 type DataMode = "live" | "imported" | "sample" | "estimated";
 type Status = "ready" | "loading" | "empty" | "error";
 
 export interface SetBProps {
   readonly variant: "set-B";
+  readonly flow: "media-links";
+  readonly mediaLinks: {
+    readonly uploadUrl: string;
+    readonly analysisUrl: string | null;
+    readonly sampleUrl: string;
+    readonly objectKey: string | null;
+  };
   readonly dataMode: DataMode;
   readonly status: Status;
   readonly statusText?: string;
@@ -46,14 +52,6 @@ export interface SetBProps {
     readonly completedSets: number;
     readonly totalSets: number;
   } | null;
-}
-
-interface LogNextSetPayload {
-  readonly planRowId: string | null;
-  readonly exercise: string;
-  readonly kg: number;
-  readonly reps: number;
-  readonly rpe: number | null;
 }
 
 const MODE_LABEL: Record<DataMode, string> = {
@@ -135,9 +133,7 @@ function Metric({ value, unit, label }: { value: string; unit?: string; label: s
   );
 }
 
-function ReadyBody({ record, observation, coaching, next, progress }: Pick<SetBProps, "record" | "observation" | "coaching" | "next" | "progress">) {
-  const logNextSet = useAction<LogNextSetPayload>("log_next_set");
-  const [submitted, setSubmitted] = useState(false);
+function ReadyBody({ record, observation, coaching, next, progress, mediaLinks }: Pick<SetBProps, "record" | "observation" | "coaching" | "next" | "progress" | "mediaLinks">) {
   const kgDelta = next.kg - record.kg;
 
   return (
@@ -145,7 +141,7 @@ function ReadyBody({ record, observation, coaching, next, progress }: Pick<SetBP
       <Card surface="sunken" padding="md" radius="md" shadow="none">
         <Stack gap="md">
           <Row gap="sm" align="center" justify="between" wrap>
-            <Heading level={3}>다음 세트: {coaching.change}</Heading>
+            <Heading level={3}>다음 세트</Heading>
             {kgDelta !== 0 ? (
               <Badge variant={kgDelta < 0 ? "warning" : "success"} size="sm" pill>
                 <span style={NUM_STYLE}>{kgDelta > 0 ? "+" : ""}{fmt(kgDelta)}kg</span>
@@ -156,29 +152,17 @@ function ReadyBody({ record, observation, coaching, next, progress }: Pick<SetBP
             <Metric value={fmt(next.kg)} unit="kg" label={next.exercise} />
             <Metric value={String(next.reps)} unit="회" label="목표 횟수" />
           </Row>
-          {next.cue ? <Text size="sm" weight="semibold">자세 큐 · {next.cue}</Text> : null}
-          <Text size="sm">{coaching.why}</Text>
-          <Button
-            variant="primary"
-            size="lg"
-            fullWidth
-            style={PRIMARY_ACTION_STYLE}
-            disabled={submitted}
-            loading={submitted}
-            aria-disabled={submitted}
-            onPress={() => {
-              if (submitted) return;
-              setSubmitted(true);
-              logNextSet({ planRowId: record.planRowId, exercise: next.exercise, kg: next.kg, reps: next.reps, rpe: null });
-            }}
-          >
-            이대로 다음 세트 기록
-          </Button>
-          {submitted ? (
-            <div role="status" aria-live="polite"><Text size="sm" tone="muted">
-              기록하는 중이에요. 저장되면 진행 상황이 갱신돼요
-            </Text></div>
-          ) : null}
+          <Text size="sm" weight="semibold">{next.cue ?? coaching.change}</Text>
+          <a href={mediaLinks.analysisUrl ?? mediaLinks.uploadUrl} target="_blank" rel="noopener noreferrer"
+            style={{ ...PRIMARY_ACTION_STYLE, display: "flex", alignItems: "center", justifyContent: "center",
+              borderRadius: "var(--ggui-shape-radius-control)", background: "var(--ggui-color-primary-500)",
+              color: "var(--ggui-color-onPrimary)", textDecoration: "none", fontWeight: 600 }}>
+            스쿼트 영상 분석
+          </a>
+          <Row gap="lg" wrap>
+            <a href={mediaLinks.uploadUrl} target="_blank" rel="noopener noreferrer">영상 올리기</a>
+            <a href={mediaLinks.sampleUrl} target="_blank" rel="noopener noreferrer">내 스쿼트 영상</a>
+          </Row>
         </Stack>
       </Card>
 
@@ -186,16 +170,9 @@ function ReadyBody({ record, observation, coaching, next, progress }: Pick<SetBP
         <Text size="xs" tone="muted" caps>방금 기록</Text>
         <Row gap="sm" align="center" justify="between" wrap>
           <Text weight="semibold">{record.exercise}</Text>
-          <Text size="sm" tone="muted" style={NUM_STYLE}>{fmtTime(record.occurredAt)}</Text>
         </Row>
         <Text style={NUM_STYLE}>
           {fmt(record.kg)}kg × {record.reps}회{record.rpe !== null ? ` · RPE ${fmt(record.rpe)}` : ""}
-        </Text>
-        {record.note ? <Text size="sm" tone="muted">메모 · {record.note}</Text> : null}
-        <Text size="sm" tone="muted">
-          {observation.observed && observation.items.length > 0
-            ? `보고한 관찰 · ${observation.items.join(" · ")}`
-            : "관찰 없음 · 사용자가 보고한 내용만 반영해요"}
         </Text>
       </Stack>
 
@@ -219,7 +196,7 @@ function ReadyBody({ record, observation, coaching, next, progress }: Pick<SetBP
 }
 
 export default function SetBCard(props: SetBProps) {
-  const { status, statusText, title, sourceLabel, dataMode, record, observation, coaching, next, progress } = props;
+  const { status, statusText, title, sourceLabel, dataMode, record, observation, coaching, next, progress, mediaLinks } = props;
 
   let body: ReactNode;
   if (status === "loading") {
@@ -243,15 +220,14 @@ export default function SetBCard(props: SetBProps) {
       </Card>
     );
   } else {
-    body = <ReadyBody record={record} observation={observation} coaching={coaching} next={next} progress={progress} />;
+    body = <ReadyBody record={record} observation={observation} coaching={coaching} next={next} progress={progress} mediaLinks={mediaLinks} />;
   }
 
   return (
     <div lang="ko" style={ROOT_STYLE} data-blueprint="ptbook:set-B">
       <Card padding="lg" radius="lg" shadow="none" border>
         <Stack gap="md">
-          <SourceRow sourceLabel={sourceLabel} dataMode={dataMode} />
-          <Heading level={2}>{title}</Heading>
+          <Heading level={2}>{record.exercise}</Heading>
           {body}
         </Stack>
       </Card>

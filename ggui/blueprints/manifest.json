@@ -132,119 +132,6 @@
                   ]
                 }
               },
-              "estimate": {
-                "description": "추정 표시. image = OpenAI 공개 사진 샘플 분석, text = A.X K2 텍스트/분량 추정(사진 미분석), manual = 사용자 입력.",
-                "required": true,
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "isEstimate": {
-                      "type": "boolean"
-                    },
-                    "basis": {
-                      "type": "string",
-                      "enum": [
-                        "image",
-                        "text",
-                        "manual"
-                      ]
-                    },
-                    "confidence": {
-                      "type": "string",
-                      "enum": [
-                        "low",
-                        "medium",
-                        "high"
-                      ]
-                    },
-                    "note": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "isEstimate",
-                    "basis",
-                    "confidence",
-                    "note"
-                  ]
-                }
-              },
-              "pendingEstimate": {
-                "description": "아직 기록되지 않은 식사 추정(contracts.ts mealEstimate). 있으면 '이대로 기록'/'수정' 행동을 보여준다.",
-                "required": true,
-                "schema": {
-                  "type": [
-                    "object",
-                    "null"
-                  ],
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "label": {
-                      "type": "string",
-                      "maxLength": 120
-                    },
-                    "kcal": {
-                      "type": "number",
-                      "minimum": 0,
-                      "maximum": 5000
-                    },
-                    "macros": {
-                      "type": "object",
-                      "properties": {
-                        "carbG": {
-                          "type": "number",
-                          "minimum": 0,
-                          "maximum": 1000
-                        },
-                        "proteinG": {
-                          "type": "number",
-                          "minimum": 0,
-                          "maximum": 1000
-                        },
-                        "fatG": {
-                          "type": "number",
-                          "minimum": 0,
-                          "maximum": 1000
-                        }
-                      },
-                      "required": [
-                        "carbG",
-                        "proteinG",
-                        "fatG"
-                      ]
-                    },
-                    "confidence": {
-                      "type": "string",
-                      "enum": [
-                        "low",
-                        "medium",
-                        "high"
-                      ]
-                    },
-                    "assumptions": {
-                      "type": "array",
-                      "maxItems": 8,
-                      "items": {
-                        "type": "string",
-                        "maxLength": 300
-                      }
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "label",
-                    "kcal",
-                    "macros",
-                    "confidence",
-                    "assumptions"
-                  ]
-                }
-              },
               "lastMeal": {
                 "description": "가장 최근 확정 기록. 없으면 null. 있으면 '기록 수정' 행동을 보여준다.",
                 "required": true,
@@ -272,6 +159,31 @@
                     },
                     "corrected": {
                       "type": "boolean"
+                    },
+                    "macros": {
+                      "type": "object",
+                      "properties": {
+                        "carbG": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1000
+                        },
+                        "proteinG": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1000
+                        },
+                        "fatG": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1000
+                        }
+                      },
+                      "required": [
+                        "carbG",
+                        "proteinG",
+                        "fatG"
+                      ]
                     }
                   },
                   "required": [
@@ -279,105 +191,41 @@
                     "label",
                     "kcal",
                     "occurredAt",
-                    "corrected"
+                    "corrected",
+                    "macros"
+                  ]
+                }
+              },
+              "flow": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "record-first"
+                  ]
+                }
+              },
+              "uploadUrl": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "format": "uri",
+                  "maxLength": 3000,
+                  "pattern": "^https://ptbook-mcp\\.changeroa\\.workers\\.dev/upload\\?"
+                }
+              },
+              "presentation": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "concise-v2"
                   ]
                 }
               }
             }
           },
-          "actionSpec": {
-            "log_meal": {
-              "label": "이대로 기록",
-              "description": "사용자가 pendingEstimate를 그대로 기록하기로 확인했다. agent는 식사 기록 도구를 호출하고 totals/lastMeal이 갱신된 같은 카드를 amend한다.",
-              "oneShot": true,
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "estimateId": {
-                    "type": "string"
-                  },
-                  "label": {
-                    "type": "string"
-                  },
-                  "kcal": {
-                    "type": "number",
-                    "minimum": 0,
-                    "maximum": 5000
-                  },
-                  "macros": {
-                    "type": "object",
-                    "properties": {
-                      "carbG": {
-                        "type": "number",
-                        "minimum": 0,
-                        "maximum": 1000
-                      },
-                      "proteinG": {
-                        "type": "number",
-                        "minimum": 0,
-                        "maximum": 1000
-                      },
-                      "fatG": {
-                        "type": "number",
-                        "minimum": 0,
-                        "maximum": 1000
-                      }
-                    },
-                    "required": [
-                      "carbG",
-                      "proteinG",
-                      "fatG"
-                    ]
-                  }
-                },
-                "required": [
-                  "estimateId",
-                  "label",
-                  "kcal",
-                  "macros"
-                ],
-                "additionalProperties": false
-              },
-              "example": {
-                "estimateId": "est_sample_01",
-                "label": "닭가슴살 샐러드와 현미밥 반 공기",
-                "kcal": 520,
-                "macros": {
-                  "carbG": 58,
-                  "proteinG": 42,
-                  "fatG": 12
-                }
-              }
-            },
-            "correct_meal": {
-              "label": "수정할게요",
-              "description": "사용자가 추정(estimate) 또는 확정 기록(meal)을 고치고 싶다. agent는 무엇을 바꿀지 되묻고 수정 도구를 호출한 뒤 같은 카드를 amend한다.",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "target": {
-                    "type": "string",
-                    "enum": [
-                      "estimate",
-                      "meal"
-                    ]
-                  },
-                  "id": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "target",
-                  "id"
-                ],
-                "additionalProperties": false
-              },
-              "example": {
-                "target": "estimate",
-                "id": "est_sample_01"
-              }
-            }
-          }
+          "actionSpec": {}
         },
         "variance": {
           "persona": "ptbook-coach",
@@ -386,20 +234,21 @@
             "app": "ptbook",
             "useCase": "diet",
             "logicalId": "diet-A",
-            "layout": "gauge-ring",
-            "locale": "ko-KR"
+            "layout": "kcal-first-edit",
+            "locale": "ko-KR",
+            "presentation": "concise-v2"
           },
-          "seedPrompt": "식단 카드 A 두 개의 링: 칼로리 게이지와 탄단지 링, 텍스트 기반 추정 표시, 기록/수정 버튼"
+          "seedPrompt": "선 기록 후 수정: 칼로리를 크게, 탄단지와 오늘 누적, 인라인 수정"
         },
-        "contractHash": "97a2936b28454820",
-        "variantKey": "6832aa9eb43802bd",
+        "contractHash": "559eaf036472bfe4",
+        "variantKey": "22d3bd148f00390c",
         "source": {
           "kind": "curated"
         },
         "generatorProtocolVersion": "draft-2026-09-10",
         "intent": "오늘 섭취 칼로리 진행률과 탄단지 구성을 보여주고 텍스트 기반 추정을 확인해 식사를 기록하거나 수정하는 카드"
       },
-      "codeRef": "81060b86863bdb10f9ea16c6502c7b96998958bd81b458d04f25c44fbea3cf99.tsx"
+      "codeRef": "945ae283316dcfd085cc9042e895c99be4287e755ab6f14bffa7ae25d9ce7936.tsx"
     },
     {
       "record": {
@@ -692,76 +541,19 @@
                     "state"
                   ]
                 }
+              },
+              "presentation": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "concise-v2"
+                  ]
+                }
               }
             }
           },
-          "actionSpec": {
-            "apply_plan": {
-              "label": "이 계획 적용",
-              "description": "사용자가 candidate 계획을 적용하기로 확인했다. agent는 expectedRevision이 최신인지 확인한 뒤 계획 적용 도구를 호출하고, 결과로 같은 카드를 amend한다.",
-              "confirm": true,
-              "oneShot": true,
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "candidateId": {
-                    "type": "string"
-                  },
-                  "expectedRevision": {
-                    "type": "integer",
-                    "minimum": 0
-                  },
-                  "date": {
-                    "type": "string",
-                    "format": "date"
-                  }
-                },
-                "required": [
-                  "candidateId",
-                  "expectedRevision",
-                  "date"
-                ],
-                "additionalProperties": false
-              },
-              "example": {
-                "candidateId": "plan_sample_002",
-                "expectedRevision": 1,
-                "date": "2026-11-07"
-              }
-            },
-            "keep_plan": {
-              "label": "기존 계획 유지",
-              "description": "사용자가 제안을 거절하고 현재 계획을 유지한다. agent는 candidate를 버리고 같은 카드를 amend한다.",
-              "oneShot": true,
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "candidateId": {
-                    "type": "string"
-                  },
-                  "expectedRevision": {
-                    "type": "integer",
-                    "minimum": 0
-                  },
-                  "date": {
-                    "type": "string",
-                    "format": "date"
-                  }
-                },
-                "required": [
-                  "candidateId",
-                  "expectedRevision",
-                  "date"
-                ],
-                "additionalProperties": false
-              },
-              "example": {
-                "candidateId": "plan_sample_002",
-                "expectedRevision": 1,
-                "date": "2026-11-07"
-              }
-            }
-          }
+          "actionSpec": {}
         },
         "variance": {
           "persona": "ptbook-coach",
@@ -771,19 +563,20 @@
             "useCase": "plan",
             "logicalId": "plan-A",
             "layout": "ledger-confirm",
-            "locale": "ko-KR"
+            "locale": "ko-KR",
+            "presentation": "concise-v2"
           },
           "seedPrompt": "오늘 계획표: 현재 계획 행과 제안 계획을 전후 비교로 보여주고 적용/유지 확인을 받는다"
         },
-        "contractHash": "b29f5042a9acd352",
-        "variantKey": "c6e78f09324971bf",
+        "contractHash": "529366b415ae3746",
+        "variantKey": "c7f7e247ecc094ba",
         "source": {
           "kind": "curated"
         },
         "generatorProtocolVersion": "draft-2026-09-10",
         "intent": "오늘 운동 계획표를 행 단위로 보여주고, 제안이 있으면 변경 전후를 비교해 적용 또는 유지를 확인받는 카드"
       },
-      "codeRef": "daf42bc6746d2bc00262b32f994527639c18c9897bff09e5c25f678213826265.tsx"
+      "codeRef": "ae5015547ab89190d93046d84bc1ba36d659e49925697770547790da6e607c08.tsx"
     },
     {
       "record": {
@@ -1011,62 +804,71 @@
                     "totalSets"
                   ]
                 }
+              },
+              "flow": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "media-links"
+                  ]
+                }
+              },
+              "mediaLinks": {
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "uploadUrl": {
+                      "type": "string",
+                      "format": "uri",
+                      "maxLength": 3000,
+                      "pattern": "^https://ptbook-mcp\\.changeroa\\.workers\\.dev/upload\\?"
+                    },
+                    "sampleUrl": {
+                      "type": "string",
+                      "format": "uri",
+                      "maxLength": 3000,
+                      "pattern": "^https://ptbook-mcp\\.changeroa\\.workers\\.dev/upload\\?"
+                    },
+                    "analysisUrl": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "uri",
+                      "maxLength": 3000,
+                      "pattern": "^https://ptbook-mcp\\.changeroa\\.workers\\.dev/upload\\?"
+                    },
+                    "objectKey": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "maxLength": 200
+                    }
+                  },
+                  "required": [
+                    "uploadUrl",
+                    "sampleUrl",
+                    "analysisUrl",
+                    "objectKey"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "presentation": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "concise-v2"
+                  ]
+                }
               }
             }
           },
-          "actionSpec": {
-            "log_next_set": {
-              "label": "이대로 다음 세트 기록",
-              "description": "사용자가 처방된 다음 세트를 수행했다고 보고한다. agent는 세트 기록 도구를 호출하고 결과(completedSets 갱신)로 같은 카드 또는 계획표 카드를 amend한다.",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "planRowId": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "exercise": {
-                    "type": "string"
-                  },
-                  "kg": {
-                    "type": "number",
-                    "minimum": 0,
-                    "maximum": 300
-                  },
-                  "reps": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 30
-                  },
-                  "rpe": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "minimum": 1,
-                    "maximum": 10
-                  }
-                },
-                "required": [
-                  "planRowId",
-                  "exercise",
-                  "kg",
-                  "reps",
-                  "rpe"
-                ],
-                "additionalProperties": false
-              },
-              "example": {
-                "planRowId": "row_sample_2",
-                "exercise": "백 스쿼트",
-                "kg": 57.5,
-                "reps": 8,
-                "rpe": null
-              }
-            }
-          }
+          "actionSpec": {}
         },
         "variance": {
           "persona": "ptbook-coach",
@@ -1075,20 +877,21 @@
             "app": "ptbook",
             "useCase": "set",
             "logicalId": "set-B",
-            "layout": "prescription-first",
-            "locale": "ko-KR"
+            "layout": "set-media-links",
+            "locale": "ko-KR",
+            "presentation": "concise-v2"
           },
-          "seedPrompt": "세트 카드 B 다음 세트 처방: 바꿀 한 가지와 중량/횟수를 먼저, 방금 기록은 아래"
+          "seedPrompt": "세트 저장 결과와 다음 행동, 실제 동작하는 영상 업로드와 분석 링크"
         },
-        "contractHash": "9a2ec961e2956938",
-        "variantKey": "e19b234338d44bda",
+        "contractHash": "86cbb68e098aa19f",
+        "variantKey": "cb97a644ae40f075",
         "source": {
           "kind": "curated"
         },
         "generatorProtocolVersion": "draft-2026-09-10",
         "intent": "방금 기록한 세트와 다음 세트에 바꿀 한 가지를 보여주고 처방된 다음 세트를 기록하는 카드"
       },
-      "codeRef": "591753c8706ff2d3d3cb338836307d605d769a869c60ac27604c2045dd8aa6d9.tsx"
+      "codeRef": "05741e42e907aae4c3187d91ef9bdd5173eedfed9c17e5bfcd079434dc265d8b.tsx"
     },
     {
       "record": {
@@ -1252,41 +1055,19 @@
                     }
                   }
                 }
+              },
+              "presentation": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "concise-v2"
+                  ]
+                }
               }
             }
           },
-          "actionSpec": {
-            "propose_plan": {
-              "label": "이 강도로 오늘 계획 만들기",
-              "description": "사용자가 고른 강도로 오늘 계획 제안을 요청한다. agent는 계획 제안 도구를 호출하고 plan-A 카드로 확인을 받는다.",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "sleepDate": {
-                    "type": "string",
-                    "format": "date"
-                  },
-                  "intensity": {
-                    "type": "string",
-                    "enum": [
-                      "keep",
-                      "lower",
-                      "rest"
-                    ]
-                  }
-                },
-                "required": [
-                  "sleepDate",
-                  "intensity"
-                ],
-                "additionalProperties": false
-              },
-              "example": {
-                "sleepDate": "2026-11-06",
-                "intensity": "lower"
-              }
-            }
-          }
+          "actionSpec": {}
         },
         "variance": {
           "persona": "ptbook-coach",
@@ -1296,19 +1077,20 @@
             "useCase": "sleep",
             "logicalId": "sleep-B",
             "layout": "metric-intensity-picker",
-            "locale": "ko-KR"
+            "locale": "ko-KR",
+            "presentation": "concise-v2"
           },
           "seedPrompt": "수면 카드 B 오늘 강도부터: 총 수면과 효율을 크게, 강도 선택 칩과 계획 제안 버튼"
         },
-        "contractHash": "e879e65e8ada24ba",
-        "variantKey": "4a2a00195b9e0dd1",
+        "contractHash": "0d6193dd9691d68e",
+        "variantKey": "5092ddff3b863643",
         "source": {
           "kind": "curated"
         },
         "generatorProtocolVersion": "draft-2026-09-10",
         "intent": "어젯밤 수면 측정값을 보여주고 오늘 운동 강도를 고르게 해 계획 제안을 요청하는 카드"
       },
-      "codeRef": "0734a709c345e13aa95413eb11b3d2b3127a5d9ee2ad4cefc2df332eebe8aed7.tsx"
+      "codeRef": "49e05a831f9df8b6612c5e871c3150e9ab73ab457d2b894d15a212fc7a0b3d11.tsx"
     },
     {
       "record": {
@@ -1444,48 +1226,28 @@
                   "type": "string",
                   "maxLength": 160
                 }
+              },
+              "presentation": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "concise-v2"
+                  ]
+                }
+              },
+              "analysisUrl": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "format": "uri",
+                  "maxLength": 3000,
+                  "pattern": "^https://ptbook-mcp\\.changeroa\\.workers\\.dev/upload\\?"
+                }
               }
             }
           },
-          "actionSpec": {
-            "open_clip": {
-              "label": "원본에서 이 구간 열기",
-              "description": "사용자가 참고 구간 링크를 열었다. 링크 이동은 카드가 직접 하고(새 탭), agent는 이 이벤트로 어떤 구간을 봤는지 알고 다음 안내(다음 구간, 세트 복귀)를 이어간다.",
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "clipId": {
-                    "type": "string"
-                  },
-                  "sourceUrl": {
-                    "type": "string",
-                    "format": "uri"
-                  },
-                  "startSec": {
-                    "type": "integer",
-                    "minimum": 0
-                  },
-                  "endSec": {
-                    "type": "integer",
-                    "minimum": 0
-                  }
-                },
-                "required": [
-                  "clipId",
-                  "sourceUrl",
-                  "startSec",
-                  "endSec"
-                ],
-                "additionalProperties": false
-              },
-              "example": {
-                "clipId": "clip_sample_01",
-                "sourceUrl": "https://example.invalid/reference-squat",
-                "startSec": 42,
-                "endSec": 71
-              }
-            }
-          }
+          "actionSpec": {}
         },
         "variance": {
           "persona": "ptbook-coach",
@@ -1495,19 +1257,20 @@
             "useCase": "video",
             "logicalId": "video-A",
             "layout": "timeline-clips",
-            "locale": "ko-KR"
+            "locale": "ko-KR",
+            "presentation": "concise-v2"
           },
           "seedPrompt": "영상 카드 A 구간을 콕 집어: 참고 구간 타임라인과 원본 열기 링크, 내 영상 분석 미지원 표시"
         },
-        "contractHash": "2c46ff7d6a13c009",
-        "variantKey": "60c1fb765224dabc",
+        "contractHash": "631726764553b31d",
+        "variantKey": "bb816cf4511cfc8a",
         "source": {
           "kind": "curated"
         },
         "generatorProtocolVersion": "draft-2026-09-10",
         "intent": "질문한 자세 포인트에 맞는 참고 영상 구간을 시작/종료 초와 cue, 원본 링크로 안내하는 카드"
       },
-      "codeRef": "dccea1f96da1f3f5e128afd7abd8e91d8c513acb1987a722e055c5548bbf2448.tsx"
+      "codeRef": "63065f1db542d90597d6d2f00a541ad9de881acd6ac49c8ba0761319d9f37a90.tsx"
     }
   ]
 }

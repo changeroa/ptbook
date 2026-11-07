@@ -294,29 +294,16 @@ export default function PlanACard(props: PlanAProps) {
       </Card>
     );
   } else {
+    const shown = candidate ?? current;
+    const rows = shown?.rows.filter(row => !candidate || !current || current.rows.every(old =>
+      old.id !== row.id || old.sets !== row.sets || old.targetKg !== row.targetKg || old.targetReps !== row.targetReps)) ?? [];
     body = (
       <Stack gap="md">
-        {current ? (
+        {shown ? (
           <Stack gap="sm">
-            <Row gap="sm" align="center" justify="between" wrap>
-              <Text size="sm" tone="muted" style={NUM_STYLE}>{current.date}</Text>
-              <Badge variant={current.status === "completed" ? "success" : "primary"} size="sm" pill>
-                {STATUS_LABEL[current.status]}
-              </Badge>
-            </Row>
-            <PlanLedger plan={current} showProgress />
-            <Totals plan={current} label="오늘 합계" />
-            <Text size="sm" tone="muted">{current.reason}</Text>
+            <PlanLedger plan={{ ...shown, rows }} showProgress={!candidate} />
+            <Totals plan={shown} label="오늘 합계" />
           </Stack>
-        ) : null}
-        {candidate ? (
-          <Confirmation
-            current={current}
-            candidate={candidate}
-            date={date}
-            state={confirmation.state}
-            message={confirmation.message}
-          />
         ) : null}
       </Stack>
     );
@@ -326,7 +313,6 @@ export default function PlanACard(props: PlanAProps) {
     <div lang="ko" style={ROOT_STYLE} data-blueprint="ptbook:plan-A">
       <Card padding="lg" radius="lg" shadow="none" border>
         <Stack gap="md">
-          <SourceRow sourceLabel={sourceLabel} dataMode={dataMode} />
           <Heading level={2}>{title}</Heading>
           {body}
         </Stack>

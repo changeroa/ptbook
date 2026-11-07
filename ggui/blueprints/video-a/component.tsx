@@ -32,6 +32,7 @@ export interface VideoAProps {
   readonly query: string;
   readonly clips: readonly ReferenceClip[];
   readonly analysisNote?: string;
+  readonly analysisUrl: string;
 }
 
 interface OpenClipPayload {
@@ -121,9 +122,7 @@ function LoadingBody({ text }: { text?: string }) {
 }
 
 function ClipRow({ clip, primary }: { clip: ReferenceClip; primary: boolean }) {
-  const openClip = useAction<OpenClipPayload>("open_clip");
   const href = clip.clipUrl ?? clip.sourceUrl;
-  const fire = () => openClip({ clipId: clip.id, sourceUrl: clip.sourceUrl, startSec: clip.startSec, endSec: clip.endSec });
 
   return (
     <li style={TIMELINE_ROW_STYLE}>
@@ -140,11 +139,11 @@ function ClipRow({ clip, primary }: { clip: ReferenceClip; primary: boolean }) {
           </Stack>
         </Row>
         {primary ? (
-          <a href={href} target="_blank" rel="noopener noreferrer" style={LINK_BUTTON_STYLE} onClick={fire}>
+          <a href={href} target="_blank" rel="noopener noreferrer" style={LINK_BUTTON_STYLE}>
             원본에서 {fmtClock(clip.startSec)}부터 열기
           </a>
         ) : (
-          <Link href={href} external underline="always" onClick={fire}>
+          <Link href={href} external underline="always">
             원본에서 {fmtClock(clip.startSec)}부터 열기
           </Link>
         )}
@@ -180,13 +179,12 @@ export default function VideoACard(props: VideoAProps) {
   } else {
     body = (
       <Stack gap="md">
-        <Text size="sm" tone="muted">찾는 포인트 · {query}</Text>
         <ol style={{ listStyle: "none", margin: 0, padding: 0 }} aria-label="참고 영상 구간">
           {clips.map((clip, i) => (
             <ClipRow key={clip.id} clip={clip} primary={i === 0} />
           ))}
         </ol>
-        <Text size="sm" tone="muted">{analysisNote ?? DEFAULT_ANALYSIS_NOTE}</Text>
+        <a href={props.analysisUrl} target="_blank" rel="noopener noreferrer" style={LINK_BUTTON_STYLE}>스쿼트 영상 분석</a>
       </Stack>
     );
   }
@@ -195,7 +193,6 @@ export default function VideoACard(props: VideoAProps) {
     <div lang="ko" style={ROOT_STYLE} data-blueprint="ptbook:video-A">
       <Card padding="lg" radius="lg" shadow="none" border>
         <Stack gap="md">
-          <SourceRow sourceLabel={sourceLabel} dataMode={dataMode} />
           <Heading level={2}>{title}</Heading>
           {body}
         </Stack>

@@ -20,29 +20,59 @@
         "variant": {
           "description": "논리 variant ID. 항상 sleep-B.",
           "required": true,
-          "schema": { "type": "string", "enum": ["sleep-B"] }
+          "schema": {
+            "type": "string",
+            "enum": [
+              "sleep-B"
+            ]
+          }
         },
         "dataMode": {
           "description": "데이터 출처 유형.",
           "required": true,
-          "schema": { "type": "string", "enum": ["live", "imported", "sample", "estimated"] }
+          "schema": {
+            "type": "string",
+            "enum": [
+              "live",
+              "imported",
+              "sample",
+              "estimated"
+            ]
+          }
         },
         "status": {
           "required": true,
-          "schema": { "type": "string", "enum": ["ready", "loading", "empty", "error"] }
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "loading",
+              "empty",
+              "error"
+            ]
+          }
         },
         "statusText": {
-          "schema": { "type": "string", "maxLength": 200 }
+          "schema": {
+            "type": "string",
+            "maxLength": 200
+          }
         },
         "title": {
           "description": "첫 답: 오늘 강도를 바꿀지 (예: 오늘은 평소 강도의 90%로 가요).",
           "required": true,
-          "schema": { "type": "string", "maxLength": 120 }
+          "schema": {
+            "type": "string",
+            "maxLength": 120
+          }
         },
         "sourceLabel": {
           "description": "출처와 수집 시각 (예: Healine 11/6 수면 · 11/7 07:10 동기화).",
           "required": true,
-          "schema": { "type": "string", "maxLength": 120 }
+          "schema": {
+            "type": "string",
+            "maxLength": 120
+          }
         },
         "sleep": {
           "description": "수면 측정값. 단위는 분/퍼센트. 측정 없음은 null.",
@@ -50,13 +80,50 @@
           "schema": {
             "type": "object",
             "properties": {
-              "date": { "type": "string", "format": "date" },
-              "totalMinutes": { "type": ["number", "null"], "minimum": 0, "maximum": 1440 },
-              "deepMinutes": { "type": ["number", "null"], "minimum": 0, "maximum": 1440 },
-              "remMinutes": { "type": ["number", "null"], "minimum": 0, "maximum": 1440 },
-              "efficiencyPct": { "type": ["number", "null"], "minimum": 0, "maximum": 100 }
+              "date": {
+                "type": "string",
+                "format": "date"
+              },
+              "totalMinutes": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 1440
+              },
+              "deepMinutes": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 1440
+              },
+              "remMinutes": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 1440
+              },
+              "efficiencyPct": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0,
+                "maximum": 100
+              }
             },
-            "required": ["date", "totalMinutes", "deepMinutes", "remMinutes", "efficiencyPct"]
+            "required": [
+              "date",
+              "totalMinutes",
+              "deepMinutes",
+              "remMinutes",
+              "efficiencyPct"
+            ]
           }
         },
         "recommendation": {
@@ -65,11 +132,28 @@
           "schema": {
             "type": "object",
             "properties": {
-              "intensity": { "type": "string", "enum": ["keep", "lower", "rest"] },
-              "label": { "type": "string", "maxLength": 60 },
-              "reason": { "type": "string", "maxLength": 300 }
+              "intensity": {
+                "type": "string",
+                "enum": [
+                  "keep",
+                  "lower",
+                  "rest"
+                ]
+              },
+              "label": {
+                "type": "string",
+                "maxLength": 60
+              },
+              "reason": {
+                "type": "string",
+                "maxLength": 300
+              }
             },
-            "required": ["intensity", "label", "reason"]
+            "required": [
+              "intensity",
+              "label",
+              "reason"
+            ]
           }
         },
         "thresholds": {
@@ -77,28 +161,29 @@
           "schema": {
             "type": "object",
             "properties": {
-              "minTotalMinutes": { "type": "number", "minimum": 0 },
-              "minEfficiencyPct": { "type": "number", "minimum": 0, "maximum": 100 }
+              "minTotalMinutes": {
+                "type": "number",
+                "minimum": 0
+              },
+              "minEfficiencyPct": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              }
             }
+          }
+        },
+        "presentation": {
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "concise-v2"
+            ]
           }
         }
       }
     },
-    "actionSpec": {
-      "propose_plan": {
-        "label": "이 강도로 오늘 계획 만들기",
-        "description": "사용자가 고른 강도로 오늘 계획 제안을 요청한다. agent는 계획 제안 도구를 호출하고 plan-A 카드로 확인을 받는다.",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "sleepDate": { "type": "string", "format": "date" },
-            "intensity": { "type": "string", "enum": ["keep", "lower", "rest"] }
-          },
-          "required": ["sleepDate", "intensity"],
-          "additionalProperties": false
-        },
-        "example": { "sleepDate": "2026-11-06", "intensity": "lower" }
-      }
-    }
+    "actionSpec": {}
   }
 }

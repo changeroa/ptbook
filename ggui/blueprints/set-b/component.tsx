@@ -141,7 +141,7 @@ function ReadyBody({ record, observation, coaching, next, progress, mediaLinks }
       <Card surface="sunken" padding="md" radius="md" shadow="none">
         <Stack gap="md">
           <Row gap="sm" align="center" justify="between" wrap>
-            <Heading level={3}>다음 세트: {coaching.change}</Heading>
+            <Heading level={3}>다음 세트</Heading>
             {kgDelta !== 0 ? (
               <Badge variant={kgDelta < 0 ? "warning" : "success"} size="sm" pill>
                 <span style={NUM_STYLE}>{kgDelta > 0 ? "+" : ""}{fmt(kgDelta)}kg</span>
@@ -152,8 +152,7 @@ function ReadyBody({ record, observation, coaching, next, progress, mediaLinks }
             <Metric value={fmt(next.kg)} unit="kg" label={next.exercise} />
             <Metric value={String(next.reps)} unit="회" label="목표 횟수" />
           </Row>
-          {next.cue ? <Text size="sm" weight="semibold">자세 큐 · {next.cue}</Text> : null}
-          <Text size="sm">{coaching.why}</Text>
+          <Text size="sm" weight="semibold">{next.cue ?? coaching.change}</Text>
           <a href={mediaLinks.analysisUrl ?? mediaLinks.uploadUrl} target="_blank" rel="noopener noreferrer"
             style={{ ...PRIMARY_ACTION_STYLE, display: "flex", alignItems: "center", justifyContent: "center",
               borderRadius: "var(--ggui-shape-radius-control)", background: "var(--ggui-color-primary-500)",
@@ -171,16 +170,9 @@ function ReadyBody({ record, observation, coaching, next, progress, mediaLinks }
         <Text size="xs" tone="muted" caps>방금 기록</Text>
         <Row gap="sm" align="center" justify="between" wrap>
           <Text weight="semibold">{record.exercise}</Text>
-          <Text size="sm" tone="muted" style={NUM_STYLE}>{fmtTime(record.occurredAt)}</Text>
         </Row>
         <Text style={NUM_STYLE}>
           {fmt(record.kg)}kg × {record.reps}회{record.rpe !== null ? ` · RPE ${fmt(record.rpe)}` : ""}
-        </Text>
-        {record.note ? <Text size="sm" tone="muted">메모 · {record.note}</Text> : null}
-        <Text size="sm" tone="muted">
-          {observation.observed && observation.items.length > 0
-            ? `보고한 관찰 · ${observation.items.join(" · ")}`
-            : "관찰 없음 · 사용자가 보고한 내용만 반영해요"}
         </Text>
       </Stack>
 
@@ -235,8 +227,7 @@ export default function SetBCard(props: SetBProps) {
     <div lang="ko" style={ROOT_STYLE} data-blueprint="ptbook:set-B">
       <Card padding="lg" radius="lg" shadow="none" border>
         <Stack gap="md">
-          <SourceRow sourceLabel={sourceLabel} dataMode={dataMode} />
-          <Heading level={2}>{title}</Heading>
+          <Heading level={2}>{record.exercise}</Heading>
           {body}
         </Stack>
       </Card>

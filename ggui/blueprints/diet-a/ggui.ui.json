@@ -214,15 +214,22 @@
             ]
           }
         },
-        "editUrl": {
+        "uploadUrl": {
           "required": true,
           "schema": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": "string",
+            "format": "uri",
             "maxLength": 3000,
-            "pattern": "^https://ptbook-mcp\\.changeroa\\.workers\\.dev/meal/correct\\?"
+            "pattern": "^https://ptbook-mcp\\.changeroa\\.workers\\.dev/upload\\?"
+          }
+        },
+        "presentation": {
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "concise-v2"
+            ]
           }
         }
       }

@@ -3,13 +3,11 @@ import { authenticate } from "./auth.js";
 import type { Env } from "./env.js";
 import { createServer } from "./server.js";
 import { mediaRoute } from "./media-routes.js";
-import { mealEditRoute } from "./meal-edit.js";
 
 export default {
   async fetch(request, env, ctx) {
     const path = new URL(request.url).pathname;
     if (path === "/upload" || path === "/media/analyze") return mediaRoute(request, env);
-    if (path === "/meal/correct") return mealEditRoute(request, env);
     if (path === "/health") {
       return Response.json({ service: "ptbook", version: "0.1.0", transport: "streamable-http" });
     }

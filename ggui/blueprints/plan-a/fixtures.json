@@ -2,8 +2,8 @@
   "variant": "plan-A",
   "dataMode": "sample",
   "status": "ready",
-  "title": "오늘은 하체 3종, 총 부하 10% 낮춰요",
-  "sourceLabel": "샘플 계획 · 11/6 수면 기준",
+  "title": "오늘 하체 계획",
+  "sourceLabel": "",
   "date": "2026-11-07",
   "current": {
     "id": "plan_sample_001",
@@ -75,5 +75,6 @@
   },
   "confirmation": {
     "state": "idle"
-  }
+  },
+  "presentation": "concise-v2"
 }

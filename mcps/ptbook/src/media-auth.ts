@@ -7,7 +7,7 @@ export const OWNER_SAMPLE_KEY = "samples/owner-squat-20261107";
 export type MediaContext = { readonly env: Env; readonly identity: Identity; readonly origin: string };
 export const grantSchema = z.object({
   sub: z.string().min(1), key: z.string().max(200), date: dateKey,
-  kind: z.enum(["squat", "meal"]), purpose: z.enum(["upload", "analyze", "edit"]),
+  kind: z.enum(["squat", "meal"]), purpose: z.enum(["upload", "analyze"]),
   exp: z.number(), jti: z.string().uuid(),
 });
 export type MediaGrant = z.infer<typeof grantSchema>;
@@ -15,15 +15,6 @@ export type MediaGrant = z.infer<typeof grantSchema>;
 export async function subjectPrefix(subject: string) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(subject));
   return "media/" + Array.from(new Uint8Array(digest)).map(byte => byte.toString(16).padStart(2, "0")).join("").slice(0, 32) + "/";
-}
-
-export async function mealEditLink(context: MediaContext, date: string, mealId: string) {
-  if (!context.env.PTBOOK_MEDIA_SIGNING_KEY) throw new DomainError("NOT_CONNECTED", "수정 연결을 준비하고 있어요.");
-  const token = await new SignJWT({ key: mealId, date, kind: "meal", purpose: "edit" })
-    .setProtectedHeader({ alg: "HS256" }).setIssuer("ptbook").setAudience("ptbook-media")
-    .setSubject(context.identity.subject).setJti(crypto.randomUUID()).setIssuedAt().setExpirationTime("15m")
-    .sign(new TextEncoder().encode(context.env.PTBOOK_MEDIA_SIGNING_KEY));
-  return `${context.origin}/meal/correct?token=${encodeURIComponent(token)}`;
 }
 
 export async function authorizeObject(key: string, identity: Identity) {

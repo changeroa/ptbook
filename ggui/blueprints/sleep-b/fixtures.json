@@ -2,8 +2,8 @@
   "variant": "sleep-B",
   "dataMode": "sample",
   "status": "ready",
-  "title": "오늘은 평소 강도의 90%로 가요",
-  "sourceLabel": "브리프 제공 실측 · 11/6 수면",
+  "title": "오늘 수면",
+  "sourceLabel": "",
   "sleep": {
     "date": "2026-11-06",
     "totalMinutes": 230,
@@ -19,5 +19,6 @@
   "thresholds": {
     "minTotalMinutes": 360,
     "minEfficiencyPct": 85
-  }
+  },
+  "presentation": "concise-v2"
 }

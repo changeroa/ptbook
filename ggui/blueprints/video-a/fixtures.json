@@ -1,30 +1,23 @@
 {
   "variant": "video-A",
-  "dataMode": "sample",
+  "dataMode": "imported",
   "status": "ready",
-  "title": "무릎 방향 설명은 0:42부터예요",
-  "sourceLabel": "샘플 인덱스 · 실제 링크 아님",
+  "title": "스쿼트 참고 영상",
+  "sourceLabel": "",
   "query": "스쿼트 무릎 방향",
   "clips": [
     {
-      "id": "clip_sample_01",
-      "creator": "샘플 제작자 A",
-      "sourceUrl": "https://example.invalid/reference-squat",
-      "clipUrl": null,
-      "startSec": 42,
-      "endSec": 71,
-      "label": "무릎이 안으로 모일 때 고치는 법",
-      "cue": "발끝과 무릎을 같은 방향으로, 발 바깥쪽으로 바닥을 민다"
-    },
-    {
-      "id": "clip_sample_02",
-      "creator": "샘플 제작자 B",
-      "sourceUrl": "https://example.invalid/reference-squat-depth",
-      "clipUrl": null,
-      "startSec": 118,
-      "endSec": 140,
-      "label": "내려가는 깊이와 무릎 정렬",
-      "cue": "허벅지가 수평이 될 때까지, 무릎은 발끝 위"
+      "id": "https://www.youtube.com/watch?v=l4ikp5rDWXw-81",
+      "creator": "황철순",
+      "sourceUrl": "https://www.youtube.com/watch?v=l4ikp5rDWXw",
+      "clipUrl": "https://www.youtube.com/watch?v=l4ikp5rDWXw&t=81s",
+      "startSec": 81,
+      "endSec": 195,
+      "label": "스쿼트: 발목 가동성과 발 방향",
+      "cue": "해당 영상에서는 발을 11자로 두는 스쿼트를 선호한다고 설명한다."
     }
-  ]
+  ],
+  "presentation": "concise-v2",
+  "analysisUrl": "https://ptbook-mcp.changeroa.workers.dev/upload?token=fixture&kind=squat",
+  "analysisNote": ""
 }

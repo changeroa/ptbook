@@ -178,7 +178,7 @@
   .macros span { font-size: 14px; color: var(--ink-muted); }
   .obs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
   .obs li { display: flex; gap: var(--space-3); align-items: baseline; min-height: 44px; padding: var(--space-2) 0; border-bottom: 1px solid var(--canvas-muted); }
-  .obs .t { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--accent-ink); min-width: 3.5em; }
+  .obs .t { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--accent-ink); min-width: 3.5em; flex-shrink: 0; white-space: nowrap; }
   .coach { background: var(--canvas); border-radius: var(--radius-md); padding: var(--space-4); }
   .inline-link { color: var(--accent-ink); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
   footer { margin-top: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); color: var(--ink-muted); font-size: 14px; }
@@ -233,15 +233,14 @@
   <section class="card" id="done" hidden>
     <p class="step">3단계 · 분석</p>
     <h2 id="done-title">업로드 완료</h2>
-    <p class="muted">저장 키예요. Portal에서 "올렸어"라고 말하면 이 키로 이어서 분석할 수 있어요.</p>
-    <div class="keyrow">
+    <div class="keyrow" hidden>
       <code id="object-key"></code>
       <button class="btn btn-ghost" id="copy" type="button">복사</button>
     </div>
     <div class="status" id="copy-status" role="status" aria-live="polite"></div>
     <button class="btn btn-primary btn-lg" id="analyze" type="button">분석</button>
     <div class="status" id="analyze-status" role="status" aria-live="polite"></div>
-    <button class="btn btn-outline" id="new-file" type="button" hidden>다른 파일 올리기</button>
+    <a class="btn btn-outline" id="new-file" href="https://app.guuey.com/agent/78537711-e685-469d-b2fe-8bf378b1cdfc" hidden>새 업로드 링크 받기</a>
   </section>
 
   <section class="card" id="result" hidden>
@@ -251,7 +250,6 @@
 
   <footer>
     <a class="inline-link" id="back" href="https://app.guuey.com/agent/78537711-e685-469d-b2fe-8bf378b1cdfc">Portal로 돌아가기</a>
-    <span>업로드한 파일은 공개 주소가 생기지 않고, 이 토큰으로만 접근해요.</span>
   </footer>
 </main>
 
@@ -276,8 +274,8 @@
       title: "식사 사진 올리기",
       lead: "먹은 음식이 다 보이게 찍은 사진 1장을 올리면 칼로리와 탄단지를 추정해요.",
       pickTitle: "사진 선택",
-      pickHint: "JPEG, PNG, WEBP · 최대 10MiB",
-      accept: "image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp",
+      pickHint: "카메라 또는 사진 · 최대 10MiB",
+      accept: "image/*",
       maxBytes: 10 * MiB,
       analyzeLabel: "식사 사진 분석",
       types: ["image/jpeg", "image/png", "image/webp"],
@@ -331,6 +329,7 @@
 
   function fileLooksAllowed(file) {
     const name = (file.name || "").toLowerCase();
+    if (kind === "meal") return file.type.startsWith("image/") || /\.(jpe?g|png|webp|heic|heif|avif|gif|bmp)$/.test(name);
     if (spec.types.includes(file.type)) return true;
     return spec.extensions.some((ext) => name.endsWith(ext));
   }
@@ -467,10 +466,24 @@
     $("upload").disabled = true;
 
     if (kind === "meal") {
-      $("image").src = state.objectUrl;
-      $("image").hidden = false;
-      setStatus("review-status", "사진을 확인한 뒤 업로드를 눌러 주세요.");
-      $("upload").disabled = false;
+      state.busy = true;
+      try {
+        const image = $("image");
+        image.src = state.objectUrl;
+        image.hidden = false;
+        await withTimeout(image.decode(), METADATA_TIMEOUT_MS, "사진을 읽지 못했어요.");
+        const scale = Math.min(1, 1536 / Math.max(image.naturalWidth, image.naturalHeight));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(image.naturalWidth * scale);
+        canvas.height = Math.round(image.naturalHeight * scale);
+        canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+        state.file = new File([await canvasToJpeg(canvas)], file.name.replace(/\.[^.]+$/, "") + ".jpg", { type: "image/jpeg" });
+        $("meta-size").textContent = fmtBytes(state.file.size);
+        setStatus("review-status", "올리면 바로 분석하고 기록해요.");
+        $("upload").disabled = false;
+      } catch (err) {
+        setStatus("review-status", (err && err.message) || "사진을 읽지 못했어요.", "error");
+      } finally { state.busy = false; }
       return;
     }
 
@@ -697,6 +710,9 @@
       if (!res.ok || !body || body.ok !== true || !body.data) throw serverError(body, res.status, "분석에 실패했어요");
       if (kind === "squat") renderSquat(body.data); else renderMeal(body.data);
       $("result").hidden = false;
+      $("done").hidden = true;
+      $("title").hidden = true;
+      $("lead").hidden = true;
       setStatus("analyze-status", "분석이 끝났어요.", "success");
       $("analyze").textContent = spec.analyzeLabel + " 다시";
     } catch (err) {
@@ -716,13 +732,6 @@
     $("analyze").disabled = false;
     $("pick").hidden = true;
     $("done").hidden = false;
-  }
-
-  function startNewFile() {
-    $("done").hidden = true;
-    $("result").hidden = true;
-    setStatus("analyze-status", "");
-    resetSelection();
   }
 
   async function copyKey() {
@@ -758,13 +767,13 @@
     $("pick-title").textContent = spec.pickTitle;
     $("pick-hint").textContent = spec.pickHint;
     $("file").accept = spec.accept;
+    if (kind === "meal") $("file").setAttribute("capture", "environment");
     $("pick").hidden = false;
     $("file").addEventListener("change", (ev) => handleFile(ev.target.files && ev.target.files[0]));
     $("upload").addEventListener("click", upload);
     $("reselect").addEventListener("click", resetSelection);
     $("analyze").addEventListener("click", analyze);
     $("copy").addEventListener("click", copyKey);
-    $("new-file").addEventListener("click", startNewFile);
     window.ptbookUpload = { selectFile: handleFile, state };
     if (ready) {
       state.objectKey = presetKey;

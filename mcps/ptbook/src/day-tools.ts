@@ -10,7 +10,7 @@ import { getSleep } from "./sleep.js";
 import { commit, nutrition, replay } from "./state.js";
 import { loadDay, mutateDay } from "./store.js";
 import { estimateImage } from "./vision.js";
-import { mealEditLink, type MediaContext } from "./media-auth.js";
+import { mediaLink, type MediaContext } from "./media-auth.js";
 
 export function registerDayTools(
   server: McpServer,
@@ -29,9 +29,8 @@ export function registerDayTools(
     inputSchema: dateInput,
   }, ({ date }) => reply(async () => {
     const state = await loadDay(store, date);
-    const lastMeal = state.meals.at(-1);
     return { state, progress: progress(state), daily: nutrition(state),
-      editUrl: lastMeal ? await mealEditLink(context, date, lastMeal.id) : null };
+      mealUploadUrl: (await mediaLink(context, { date, kind: "meal" })).url };
   }, meta));
   server.registerTool("get_workout_plan", {
     description: "Read your saved plan and completion counts.",

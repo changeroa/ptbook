@@ -20,33 +20,66 @@
         "variant": {
           "description": "논리 variant ID. 항상 video-A.",
           "required": true,
-          "schema": { "type": "string", "enum": ["video-A"] }
+          "schema": {
+            "type": "string",
+            "enum": [
+              "video-A"
+            ]
+          }
         },
         "dataMode": {
           "required": true,
-          "schema": { "type": "string", "enum": ["live", "imported", "sample", "estimated"] }
+          "schema": {
+            "type": "string",
+            "enum": [
+              "live",
+              "imported",
+              "sample",
+              "estimated"
+            ]
+          }
         },
         "status": {
           "required": true,
-          "schema": { "type": "string", "enum": ["ready", "loading", "empty", "error"] }
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "loading",
+              "empty",
+              "error"
+            ]
+          }
         },
         "statusText": {
-          "schema": { "type": "string", "maxLength": 200 }
+          "schema": {
+            "type": "string",
+            "maxLength": 200
+          }
         },
         "title": {
           "description": "첫 답: 설명이 시작되는 구간 (예: 무릎 방향 설명은 0:42부터예요).",
           "required": true,
-          "schema": { "type": "string", "maxLength": 120 }
+          "schema": {
+            "type": "string",
+            "maxLength": 120
+          }
         },
         "sourceLabel": {
           "description": "출처 (예: 영상 인덱스 19구간 · 11/7 기준).",
           "required": true,
-          "schema": { "type": "string", "maxLength": 120 }
+          "schema": {
+            "type": "string",
+            "maxLength": 120
+          }
         },
         "query": {
           "description": "사용자가 찾는 자세 포인트 (예: 스쿼트 무릎 방향).",
           "required": true,
-          "schema": { "type": "string", "maxLength": 80 }
+          "schema": {
+            "type": "string",
+            "maxLength": 80
+          }
         },
         "clips": {
           "description": "참고 구간 목록. 첫 항목이 대표 구간. clipUrl은 시작 초가 포함된 딥링크(없으면 null, 카드는 sourceUrl을 쓴다).",
@@ -58,42 +91,80 @@
             "items": {
               "type": "object",
               "properties": {
-                "id": { "type": "string" },
-                "creator": { "type": "string", "maxLength": 80 },
-                "sourceUrl": { "type": "string", "format": "uri" },
-                "clipUrl": { "type": ["string", "null"] },
-                "startSec": { "type": "integer", "minimum": 0 },
-                "endSec": { "type": "integer", "minimum": 0 },
-                "label": { "type": "string", "maxLength": 80 },
-                "cue": { "type": "string", "maxLength": 160 }
+                "id": {
+                  "type": "string"
+                },
+                "creator": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "sourceUrl": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "clipUrl": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "startSec": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "endSec": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "label": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "cue": {
+                  "type": "string",
+                  "maxLength": 160
+                }
               },
-              "required": ["id", "creator", "sourceUrl", "clipUrl", "startSec", "endSec", "label", "cue"]
+              "required": [
+                "id",
+                "creator",
+                "sourceUrl",
+                "clipUrl",
+                "startSec",
+                "endSec",
+                "label",
+                "cue"
+              ]
             }
           }
         },
         "analysisNote": {
           "description": "분석 범위 안내. 기본값은 '내 영상 분석은 지원하지 않아요 · 참고 구간만 안내해요'.",
-          "schema": { "type": "string", "maxLength": 160 }
+          "schema": {
+            "type": "string",
+            "maxLength": 160
+          }
+        },
+        "presentation": {
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "concise-v2"
+            ]
+          }
+        },
+        "analysisUrl": {
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 3000,
+            "pattern": "^https://ptbook-mcp\\.changeroa\\.workers\\.dev/upload\\?"
+          }
         }
       }
     },
-    "actionSpec": {
-      "open_clip": {
-        "label": "원본에서 이 구간 열기",
-        "description": "사용자가 참고 구간 링크를 열었다. 링크 이동은 카드가 직접 하고(새 탭), agent는 이 이벤트로 어떤 구간을 봤는지 알고 다음 안내(다음 구간, 세트 복귀)를 이어간다.",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "clipId": { "type": "string" },
-            "sourceUrl": { "type": "string", "format": "uri" },
-            "startSec": { "type": "integer", "minimum": 0 },
-            "endSec": { "type": "integer", "minimum": 0 }
-          },
-          "required": ["clipId", "sourceUrl", "startSec", "endSec"],
-          "additionalProperties": false
-        },
-        "example": { "clipId": "clip_sample_01", "sourceUrl": "https://example.invalid/reference-squat", "startSec": 42, "endSec": 71 }
-      }
-    }
+    "actionSpec": {}
   }
 }
