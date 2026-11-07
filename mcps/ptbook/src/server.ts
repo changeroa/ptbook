@@ -10,6 +10,7 @@ import { reply, type Meta } from "./response.js";
 import { logSet, logSetInput } from "./sets.js";
 import { getSleep } from "./sleep.js";
 import { checkDate, nutrition } from "./state.js";
+import ownerSquatAnalysis from "../assets/owner-squat-analysis.json";
 
 export function createServer(context: { readonly env: Env; readonly identity: Identity }) {
   const server = new McpServer({ name: "ptbook", version: "0.1.0" });
@@ -109,10 +110,15 @@ export function createServer(context: { readonly env: Env; readonly identity: Id
     ...meta, source: "skt/a.ll/A.X-K2-ADOT",
   }));
   server.registerTool("analyze_squat_video", {
-    description: "Analyze an approved prepared squat sample. No uploaded file path or arbitrary URL is accepted.",
+    description: "Return the cached real OpenAI analysis of six frames from owner-squat-20261107. Owner-approved sample, not a new live analysis. No uploads or arbitrary URLs.",
     inputSchema: z.strictObject({ sample_id: z.string().min(1).max(80) }),
-  }, () => reply(() => {
-    throw new DomainError("UNSUPPORTED_MEDIA", "No approved squat sample has been supplied yet. Report weight, reps and RPE for text-based coaching.");
-  }, meta));
+  }, ({ sample_id }) => reply(() => {
+    if (sample_id !== "owner-squat-20261107") {
+      throw new DomainError("UNSUPPORTED_MEDIA", "Available approved sample: owner-squat-20261107. New video uploads are not supported.");
+    }
+    return ownerSquatAnalysis;
+  }, { ...meta, dataMode: "sample", source: "openai_vision_cached_owner_sample",
+    asOf: ownerSquatAnalysis.analyzedAt,
+    warnings: ["Owner-approved sample. Cached OpenAI frame analysis, not a new call or full-video posture assessment."] }));
   return server;
 }

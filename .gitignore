@@ -13,3 +13,6 @@ guuey.worker.js
 coverage/
 evidence/private/
 *.key
+
+# owner media (never commit)
+samples/*.mp4

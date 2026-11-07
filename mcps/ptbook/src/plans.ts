@@ -36,7 +36,7 @@ export function proposePlan(input: z.infer<typeof proposeInput>, sleep: Sleep | 
       sets: lowerVolume && index > 0 ? Math.max(1, row.sets - 1) : row.sets,
       completedSets: input.state.sets.filter(record => record.planRowId === row.id).length,
     })),
-    reason: lowerVolume ? `수면 ${sleep?.totalMinutes ?? "미측정"}분을 참고해 보조운동을 각 1세트 줄이는 제안입니다. 데모 규칙이며 의학적 처방이 아닙니다.`
+    reason: lowerVolume ? `수면 ${sleep?.totalMinutes ?? "미측정"}분을 참고해 총 ${baseRows.reduce((sum, row) => sum + row.sets, 0)}세트에서 ${baseRows.reduce((sum, row, index) => sum + (index > 0 ? Math.max(1, row.sets - 1) : row.sets), 0)}세트로 줄이는 제안입니다. 보조운동 각 1세트 감소는 데모 규칙이며 의학적 처방이 아닙니다.`
       : "하체 3종 기본 제안입니다. 미확정 중량은 직접 정해주세요.",
     sleepDate: sleep?.date ?? null,
   };
