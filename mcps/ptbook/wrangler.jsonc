@@ -5,6 +5,8 @@
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
+  "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "ptbook-media" }],
+  "rules": [{ "type": "Text", "globs": ["**/*.html"], "fallthrough": true }],
   "d1_databases": [
     {
       "binding": "DB",

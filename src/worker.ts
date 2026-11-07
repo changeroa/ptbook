@@ -117,7 +117,7 @@ await serveNative(
         { type: ep.transport, url: ep.url, headers: ep.headers, alwaysLoad: true },
       ])
     );
-    mcpServers.ledger = createLedger(invoke.fs.home);
+    mcpServers.ledger = createLedger();
     // guuey#2139: the servers (and their header values) reach the CLI over its
     // stdin with `setMcpServers`, never as `--mcp-config` on its argv; the
     // spawner refuses any argument or environment value that carries one.

@@ -138,19 +138,13 @@ function ShellBody() {
               {/* Picking a menu swaps the canvas back to your pages — the
                   TONE follow is the lib's (route change + capture-phase). */}
               <NavLink to="/app" end onClick={() => setCanvasShowsView(false)}>
-                Dashboard
-              </NavLink>
-              <NavLink to="/app/reports" onClick={() => setCanvasShowsView(false)}>
-                Reports
-              </NavLink>
-              <NavLink to="/app/setup" onClick={() => setCanvasShowsView(false)}>
-                Setup
+                오늘 운동
               </NavLink>
               <NavLink to="/app/mobile" onClick={() => setCanvasShowsView(false)}>
-                📱 Talk on mobile
+                휴대폰에서 계속
               </NavLink>
               <button type="button" className="dock-logout" onClick={() => void handleLogOut()}>
-                Log out{mode === "guest" ? " (guest)" : ""}
+                로그아웃{mode === "guest" ? " (게스트)" : ""}
               </button>
             </nav>
           </SidebarPanel>
@@ -169,7 +163,7 @@ function ShellBody() {
               <header className="canvas-view-bar">
                 <span>{selected.title}</span>
                 <button type="button" className="btn" onClick={closeView}>
-                  Back to {appConfig.brand.name}
+                  오늘 운동으로 돌아가기
                 </button>
               </header>
               {selected.mount.channel !== "locator" ? (
@@ -191,7 +185,7 @@ function ShellBody() {
                 // A locator still resolving — the kit reads it and the next
                 // roster emission carries the material (a FAILED read
                 // surfaces as the chip's expired state instead).
-                <p className="calm canvas-view-loading">Loading card…</p>
+                <p className="calm canvas-view-loading">카드를 불러오고 있어요.</p>
               )}
             </div>
           ) : (

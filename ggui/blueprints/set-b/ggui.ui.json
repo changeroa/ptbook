@@ -1,0 +1,296 @@
+{
+  "id": "ptbook:set-B",
+  "name": "다음 세트 처방 (set-B)",
+  "description": "방금 기록한 세트(운동·중량·횟수·RPE)와 코치의 '다음 세트에 바꿀 한 가지'를 먼저 읽게 하고, 처방된 다음 세트를 한 번에 기록하는 카드. 자세 문제·높은 RPE·다음 세트 처방 요청의 대표형.",
+  "category": "fitness-card",
+  "uiClass": "sandboxed",
+  "matchPatterns": [
+    "다음 세트 어떻게",
+    "방금 세트 기록",
+    "너무 힘들었어",
+    "중량 낮출까",
+    "RPE 9",
+    "next set",
+    "log set"
+  ],
+  "contract": {
+    "propsSpec": {
+      "description": "ptbook 세트 카드 B. observation.observed가 false면 '관찰 없음'을 그대로 표시한다(영상 분석 미지원). coaching과 next는 agent가 계산한 처방이며 카드는 재계산하지 않는다.",
+      "properties": {
+        "variant": {
+          "description": "논리 variant ID. 항상 set-B.",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "set-B"
+            ]
+          }
+        },
+        "dataMode": {
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "live",
+              "imported",
+              "sample",
+              "estimated"
+            ]
+          }
+        },
+        "status": {
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "loading",
+              "empty",
+              "error"
+            ]
+          }
+        },
+        "statusText": {
+          "schema": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "title": {
+          "description": "첫 답: 다음 세트에 바꿀 한 가지 (예: 다음 세트는 2.5kg 낮추고 무릎 방향만 보세요).",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 120
+          }
+        },
+        "sourceLabel": {
+          "description": "출처 (예: 11/7 14:02 기록 · 오늘 계획 2행).",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 120
+          }
+        },
+        "record": {
+          "description": "방금 기록된 세트. contracts.ts setRecord와 같은 필드.",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "occurredAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "planRowId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "exercise": {
+                "type": "string"
+              },
+              "kg": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 300
+              },
+              "reps": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 30
+              },
+              "rpe": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 1,
+                "maximum": 10
+              },
+              "note": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "occurredAt",
+              "planRowId",
+              "exercise",
+              "kg",
+              "reps",
+              "rpe",
+              "note"
+            ]
+          }
+        },
+        "observation": {
+          "description": "관찰 유무와 관찰 항목. 사용자의 보고(텍스트)만 관찰로 친다. observed false면 items는 비어 있다.",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "observed": {
+                "type": "boolean"
+              },
+              "items": {
+                "type": "array",
+                "maxItems": 3,
+                "items": {
+                  "type": "string",
+                  "maxLength": 80
+                }
+              }
+            },
+            "required": [
+              "observed",
+              "items"
+            ]
+          }
+        },
+        "coaching": {
+          "description": "다음 세트에 바꿀 한 가지와 이유.",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "change": {
+                "type": "string",
+                "maxLength": 80
+              },
+              "why": {
+                "type": "string",
+                "maxLength": 300
+              }
+            },
+            "required": [
+              "change",
+              "why"
+            ]
+          }
+        },
+        "next": {
+          "description": "처방된 다음 세트. cue는 자세 큐 한 줄(없으면 null).",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "exercise": {
+                "type": "string"
+              },
+              "kg": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 300
+              },
+              "reps": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 30
+              },
+              "cue": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "exercise",
+              "kg",
+              "reps",
+              "cue"
+            ]
+          }
+        },
+        "progress": {
+          "description": "오늘 계획 행 기준 진행 (완료 세트/계획 세트). 계획 밖 세트면 null.",
+          "required": true,
+          "schema": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "completedSets": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 30
+              },
+              "totalSets": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 30
+              }
+            },
+            "required": [
+              "completedSets",
+              "totalSets"
+            ]
+          }
+        },
+        "flow": {
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "media-links"
+            ]
+          }
+        },
+        "mediaLinks": {
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "uploadUrl": {
+                "type": "string",
+                "format": "uri",
+                "maxLength": 3000,
+                "pattern": "^https://ptbook-mcp\\.changeroa\\.workers\\.dev/upload\\?"
+              },
+              "sampleUrl": {
+                "type": "string",
+                "format": "uri",
+                "maxLength": 3000,
+                "pattern": "^https://ptbook-mcp\\.changeroa\\.workers\\.dev/upload\\?"
+              },
+              "analysisUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uri",
+                "maxLength": 3000,
+                "pattern": "^https://ptbook-mcp\\.changeroa\\.workers\\.dev/upload\\?"
+              },
+              "objectKey": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 200
+              }
+            },
+            "required": [
+              "uploadUrl",
+              "sampleUrl",
+              "analysisUrl",
+              "objectKey"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "actionSpec": {}
+  }
+}

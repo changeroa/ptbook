@@ -17,7 +17,7 @@ export const logMealInput = z.strictObject({
   requestId: id,
 });
 
-export async function estimateMeal(input: z.infer<typeof estimateInput>, env: Env) {
+export async function estimateMeal(input: z.infer<typeof estimateInput>, env: Env, imageData?: string) {
   checkDate(input.state, input.date);
   const previous = replay(input.state, { id: input.requestId, operation: "estimate_meal" });
   if (previous) {
@@ -30,6 +30,7 @@ export async function estimateMeal(input: z.infer<typeof estimateInput>, env: En
   const estimate = await estimateImage({
     ...(input.sample_id === undefined ? {} : { sample_id: input.sample_id }),
     ...(input.image_url === undefined ? {} : { image_url: input.image_url }),
+    ...(imageData === undefined ? {} : { imageData }),
     description: input.description,
   }, env);
   const nextState = commit({ ...input.state, pendingEstimates: [...input.state.pendingEstimates, estimate] }, {

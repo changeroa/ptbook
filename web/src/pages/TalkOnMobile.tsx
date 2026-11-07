@@ -14,19 +14,18 @@ export function TalkOnMobile() {
 
   return (
     <div className="page mobile-page">
-      <h1>Talk on mobile</h1>
+      <h1>휴대폰에서 계속</h1>
       {target ? (
         <>
           <p className="calm">
-            Scan with a phone — the same agent, in the guuey portal. (The portal
-            has its own sign-in, so phone conversations are separate threads.)
+            QR을 스캔하면 Guuey Portal에서 같은 코치를 열어요.
+            Portal은 별도 로그인이며 새 대화로 시작해요.
           </p>
           <QrLink url={target} size={240} />
         </>
       ) : (
         <p className="calm">
-          Available once the app is bound to a deployed guuey agent —{" "}
-          <code>pnpm bootstrap -- --link</code>.
+          배포된 코치와 연결한 뒤 QR이 표시돼요.
         </p>
       )}
     </div>

@@ -1,23 +1,23 @@
 {
   "$schema": "./guuey.app.schema.json",
   "schema": 1,
-  "bootstrapped": false,
+  "bootstrapped": true,
   "brand": {
     "name": "ptbook",
-    "tagline": "An agentic app built on guuey",
-    "logoText": "AA"
+    "tagline": "계획부터 다음 세트까지, 진짜 PT해주는 에이전트",
+    "logoText": "pt"
   },
   "theme": {
-    "accent": "#8b7cf6",
+    "accent": "#087F5B",
     "mode": "light"
   },
   "copy": {
     "landing": {
-      "headline": "Ask anything.",
-      "sub": "This site has an agent. Open the chat, or use the launcher in the corner."
+      "headline": "오늘의 운동, 같이 끝내요.",
+      "sub": "수면을 참고한 계획을 적용하고, 세트를 기록하며 다음 행동을 정해요."
     },
     "login": {
-      "guestHint": "One click, no account — this browser gets its own private thread the agent remembers."
+      "guestHint": "게스트는 샘플 수면으로 시작하며, 운동·식사 원장은 임시 저장됩니다."
     }
   },
   "auth": {

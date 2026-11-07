@@ -1,0 +1,232 @@
+{
+  "id": "ptbook:diet-A",
+  "name": "오늘 식단 두 개의 링 (diet-A)",
+  "description": "식사를 즉시 기록한 뒤 칼로리, 탄단지, 오늘 누적을 보여주고 인라인 수정으로 저장된 수치를 바꾸는 카드.",
+  "category": "fitness-card",
+  "uiClass": "sandboxed",
+  "matchPatterns": [
+    "점심 먹었어",
+    "오늘 얼마나 먹었어",
+    "칼로리 얼마야",
+    "식단 기록",
+    "탄단지 비율",
+    "log meal",
+    "today's calories"
+  ],
+  "contract": {
+    "propsSpec": {
+      "description": "ptbook 식단 카드 A. totals는 확정 기록 합계, pendingEstimate는 아직 기록되지 않은 추정. 에너지 %는 카드가 4/4/9 kcal/g로 계산하고 합계 0이면 비율을 숨긴다. 게이지는 0~100으로 clamp하고 초과 kcal는 텍스트로 남긴다.",
+      "properties": {
+        "variant": {
+          "description": "논리 variant ID. 항상 diet-A.",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "diet-A"
+            ]
+          }
+        },
+        "dataMode": {
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "live",
+              "imported",
+              "sample",
+              "estimated"
+            ]
+          }
+        },
+        "status": {
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "loading",
+              "empty",
+              "error"
+            ]
+          }
+        },
+        "statusText": {
+          "schema": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "title": {
+          "description": "첫 답: 오늘 얼마나 먹었는지 (예: 점심까지 1,240kcal, 목표의 62%).",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 120
+          }
+        },
+        "sourceLabel": {
+          "description": "출처 (예: 11/7 식사 2건 · 텍스트 기반 추정).",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "maxLength": 120
+          }
+        },
+        "date": {
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "totals": {
+          "description": "확정 기록된 식사의 합계. macros 단위는 g.",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "kcal": {
+                "type": "number",
+                "minimum": 0
+              },
+              "macros": {
+                "type": "object",
+                "properties": {
+                  "carbG": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000
+                  },
+                  "proteinG": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000
+                  },
+                  "fatG": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000
+                  }
+                },
+                "required": [
+                  "carbG",
+                  "proteinG",
+                  "fatG"
+                ]
+              }
+            },
+            "required": [
+              "kcal",
+              "macros"
+            ]
+          }
+        },
+        "target": {
+          "description": "사용자가 명시하거나 저장한 하루 목표. 없으면 kcal null이고 카드는 분모를 숨긴다. 기본 처방 값을 넣지 않는다.",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "kcal": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              }
+            },
+            "required": [
+              "kcal"
+            ]
+          }
+        },
+        "lastMeal": {
+          "description": "가장 최근 확정 기록. 없으면 null. 있으면 '기록 수정' 행동을 보여준다.",
+          "required": true,
+          "schema": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string",
+                "maxLength": 120
+              },
+              "kcal": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 5000
+              },
+              "occurredAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "corrected": {
+                "type": "boolean"
+              },
+              "macros": {
+                "type": "object",
+                "properties": {
+                  "carbG": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000
+                  },
+                  "proteinG": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000
+                  },
+                  "fatG": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1000
+                  }
+                },
+                "required": [
+                  "carbG",
+                  "proteinG",
+                  "fatG"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "label",
+              "kcal",
+              "occurredAt",
+              "corrected",
+              "macros"
+            ]
+          }
+        },
+        "flow": {
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "record-first"
+            ]
+          }
+        },
+        "editUrl": {
+          "required": true,
+          "schema": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 3000,
+            "pattern": "^https://ptbook-mcp\\.changeroa\\.workers\\.dev/meal/correct\\?"
+          }
+        }
+      }
+    },
+    "actionSpec": {}
+  }
+}

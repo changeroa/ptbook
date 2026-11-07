@@ -1,0 +1,1513 @@
+{
+  "schemaVersion": 2,
+  "blueprints": [
+    {
+      "record": {
+        "schemaVersion": 2,
+        "contract": {
+          "propsSpec": {
+            "description": "ptbook 식단 카드 A. totals는 확정 기록 합계, pendingEstimate는 아직 기록되지 않은 추정. 에너지 %는 카드가 4/4/9 kcal/g로 계산하고 합계 0이면 비율을 숨긴다. 게이지는 0~100으로 clamp하고 초과 kcal는 텍스트로 남긴다.",
+            "properties": {
+              "variant": {
+                "description": "논리 variant ID. 항상 diet-A.",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "diet-A"
+                  ]
+                }
+              },
+              "dataMode": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "live",
+                    "imported",
+                    "sample",
+                    "estimated"
+                  ]
+                }
+              },
+              "status": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "ready",
+                    "loading",
+                    "empty",
+                    "error"
+                  ]
+                }
+              },
+              "statusText": {
+                "schema": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "title": {
+                "description": "첫 답: 오늘 얼마나 먹었는지 (예: 점심까지 1,240kcal, 목표의 62%).",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "maxLength": 120
+                }
+              },
+              "sourceLabel": {
+                "description": "출처 (예: 11/7 식사 2건 · 텍스트 기반 추정).",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "maxLength": 120
+                }
+              },
+              "date": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "format": "date"
+                }
+              },
+              "totals": {
+                "description": "확정 기록된 식사의 합계. macros 단위는 g.",
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "kcal": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "macros": {
+                      "type": "object",
+                      "properties": {
+                        "carbG": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1000
+                        },
+                        "proteinG": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1000
+                        },
+                        "fatG": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1000
+                        }
+                      },
+                      "required": [
+                        "carbG",
+                        "proteinG",
+                        "fatG"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kcal",
+                    "macros"
+                  ]
+                }
+              },
+              "target": {
+                "description": "사용자가 명시하거나 저장한 하루 목표. 없으면 kcal null이고 카드는 분모를 숨긴다. 기본 처방 값을 넣지 않는다.",
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "kcal": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "kcal"
+                  ]
+                }
+              },
+              "estimate": {
+                "description": "추정 표시. image = OpenAI 공개 사진 샘플 분석, text = A.X K2 텍스트/분량 추정(사진 미분석), manual = 사용자 입력.",
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "isEstimate": {
+                      "type": "boolean"
+                    },
+                    "basis": {
+                      "type": "string",
+                      "enum": [
+                        "image",
+                        "text",
+                        "manual"
+                      ]
+                    },
+                    "confidence": {
+                      "type": "string",
+                      "enum": [
+                        "low",
+                        "medium",
+                        "high"
+                      ]
+                    },
+                    "note": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "isEstimate",
+                    "basis",
+                    "confidence",
+                    "note"
+                  ]
+                }
+              },
+              "pendingEstimate": {
+                "description": "아직 기록되지 않은 식사 추정(contracts.ts mealEstimate). 있으면 '이대로 기록'/'수정' 행동을 보여준다.",
+                "required": true,
+                "schema": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string",
+                      "maxLength": 120
+                    },
+                    "kcal": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 5000
+                    },
+                    "macros": {
+                      "type": "object",
+                      "properties": {
+                        "carbG": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1000
+                        },
+                        "proteinG": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1000
+                        },
+                        "fatG": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1000
+                        }
+                      },
+                      "required": [
+                        "carbG",
+                        "proteinG",
+                        "fatG"
+                      ]
+                    },
+                    "confidence": {
+                      "type": "string",
+                      "enum": [
+                        "low",
+                        "medium",
+                        "high"
+                      ]
+                    },
+                    "assumptions": {
+                      "type": "array",
+                      "maxItems": 8,
+                      "items": {
+                        "type": "string",
+                        "maxLength": 300
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "label",
+                    "kcal",
+                    "macros",
+                    "confidence",
+                    "assumptions"
+                  ]
+                }
+              },
+              "lastMeal": {
+                "description": "가장 최근 확정 기록. 없으면 null. 있으면 '기록 수정' 행동을 보여준다.",
+                "required": true,
+                "schema": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string",
+                      "maxLength": 120
+                    },
+                    "kcal": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 5000
+                    },
+                    "occurredAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "corrected": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "label",
+                    "kcal",
+                    "occurredAt",
+                    "corrected"
+                  ]
+                }
+              }
+            }
+          },
+          "actionSpec": {
+            "log_meal": {
+              "label": "이대로 기록",
+              "description": "사용자가 pendingEstimate를 그대로 기록하기로 확인했다. agent는 식사 기록 도구를 호출하고 totals/lastMeal이 갱신된 같은 카드를 amend한다.",
+              "oneShot": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "estimateId": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "kcal": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 5000
+                  },
+                  "macros": {
+                    "type": "object",
+                    "properties": {
+                      "carbG": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000
+                      },
+                      "proteinG": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000
+                      },
+                      "fatG": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1000
+                      }
+                    },
+                    "required": [
+                      "carbG",
+                      "proteinG",
+                      "fatG"
+                    ]
+                  }
+                },
+                "required": [
+                  "estimateId",
+                  "label",
+                  "kcal",
+                  "macros"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "estimateId": "est_sample_01",
+                "label": "닭가슴살 샐러드와 현미밥 반 공기",
+                "kcal": 520,
+                "macros": {
+                  "carbG": 58,
+                  "proteinG": 42,
+                  "fatG": 12
+                }
+              }
+            },
+            "correct_meal": {
+              "label": "수정할게요",
+              "description": "사용자가 추정(estimate) 또는 확정 기록(meal)을 고치고 싶다. agent는 무엇을 바꿀지 되묻고 수정 도구를 호출한 뒤 같은 카드를 amend한다.",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "target": {
+                    "type": "string",
+                    "enum": [
+                      "estimate",
+                      "meal"
+                    ]
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "target",
+                  "id"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "target": "estimate",
+                "id": "est_sample_01"
+              }
+            }
+          }
+        },
+        "variance": {
+          "persona": "ptbook-coach",
+          "aesthetic": "ptbook-ledger-calm",
+          "context": {
+            "app": "ptbook",
+            "useCase": "diet",
+            "logicalId": "diet-A",
+            "layout": "gauge-ring",
+            "locale": "ko-KR"
+          },
+          "seedPrompt": "식단 카드 A 두 개의 링: 칼로리 게이지와 탄단지 링, 텍스트 기반 추정 표시, 기록/수정 버튼"
+        },
+        "contractHash": "97a2936b28454820",
+        "variantKey": "6832aa9eb43802bd",
+        "source": {
+          "kind": "curated"
+        },
+        "generatorProtocolVersion": "draft-2026-09-10",
+        "intent": "오늘 섭취 칼로리 진행률과 탄단지 구성을 보여주고 텍스트 기반 추정을 확인해 식사를 기록하거나 수정하는 카드"
+      },
+      "codeRef": "81060b86863bdb10f9ea16c6502c7b96998958bd81b458d04f25c44fbea3cf99.tsx"
+    },
+    {
+      "record": {
+        "schemaVersion": 2,
+        "contract": {
+          "propsSpec": {
+            "description": "ptbook 오늘 계획표. current는 적용된 계획, candidate는 확인 대기 중인 제안. 둘 다 null이면 empty 상태를 함께 보낸다.",
+            "properties": {
+              "variant": {
+                "description": "논리 variant ID. 항상 plan-A.",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "plan-A"
+                  ]
+                }
+              },
+              "dataMode": {
+                "description": "데이터 출처 유형. 카드가 출처 배지로 표시한다.",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "live",
+                    "imported",
+                    "sample",
+                    "estimated"
+                  ]
+                }
+              },
+              "status": {
+                "description": "카드 shell 상태. loading/empty/error는 같은 shell 안에서 바뀐다.",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "ready",
+                    "loading",
+                    "empty",
+                    "error"
+                  ]
+                }
+              },
+              "statusText": {
+                "description": "loading/empty/error일 때 사용자에게 보여줄 한 줄 설명.",
+                "schema": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "title": {
+                "description": "결론 한 문장 (예: 오늘은 하체 3종, 총 부하 10% 낮춤).",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "maxLength": 120
+                }
+              },
+              "sourceLabel": {
+                "description": "출처와 기준 (예: 11/7 계획 · 11/6 수면 기준).",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "maxLength": 120
+                }
+              },
+              "date": {
+                "description": "계획 날짜 YYYY-MM-DD (Asia/Seoul).",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "format": "date"
+                }
+              },
+              "current": {
+                "description": "현재 적용된 계획. 없으면 null.",
+                "required": true,
+                "schema": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "date": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "draft",
+                        "applied",
+                        "in_progress",
+                        "completed"
+                      ]
+                    },
+                    "rows": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 3,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "exercise": {
+                            "type": "string"
+                          },
+                          "sets": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 5
+                          },
+                          "targetKg": {
+                            "type": [
+                              "number",
+                              "null"
+                            ],
+                            "minimum": 0,
+                            "maximum": 300
+                          },
+                          "targetReps": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 30
+                          },
+                          "completedSets": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 30
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "exercise",
+                          "sets",
+                          "targetKg",
+                          "targetReps",
+                          "completedSets"
+                        ]
+                      }
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "sleepDate": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "date",
+                    "revision",
+                    "status",
+                    "rows",
+                    "reason"
+                  ]
+                }
+              },
+              "candidate": {
+                "description": "확인 대기 중인 제안 계획 (status draft). 없으면 null. 있으면 current와 전후 비교를 보여주고 apply_plan/keep_plan을 받는다.",
+                "required": true,
+                "schema": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "date": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "draft",
+                        "applied",
+                        "in_progress",
+                        "completed"
+                      ]
+                    },
+                    "rows": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 3,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "exercise": {
+                            "type": "string"
+                          },
+                          "sets": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 5
+                          },
+                          "targetKg": {
+                            "type": [
+                              "number",
+                              "null"
+                            ],
+                            "minimum": 0,
+                            "maximum": 300
+                          },
+                          "targetReps": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 30
+                          },
+                          "completedSets": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 30
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "exercise",
+                          "sets",
+                          "targetKg",
+                          "targetReps",
+                          "completedSets"
+                        ]
+                      }
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "sleepDate": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "date",
+                    "revision",
+                    "status",
+                    "rows",
+                    "reason"
+                  ]
+                }
+              },
+              "confirmation": {
+                "description": "확인 흐름 상태. idle: 제안 없음/대기 전, pending: 서버 처리 중, applied/kept: 서버가 확정, stale: 이 카드의 revision이 더 이상 최신이 아님.",
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "idle",
+                        "pending",
+                        "applied",
+                        "kept",
+                        "stale"
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "maxLength": 200
+                    }
+                  },
+                  "required": [
+                    "state"
+                  ]
+                }
+              }
+            }
+          },
+          "actionSpec": {
+            "apply_plan": {
+              "label": "이 계획 적용",
+              "description": "사용자가 candidate 계획을 적용하기로 확인했다. agent는 expectedRevision이 최신인지 확인한 뒤 계획 적용 도구를 호출하고, 결과로 같은 카드를 amend한다.",
+              "confirm": true,
+              "oneShot": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "candidateId": {
+                    "type": "string"
+                  },
+                  "expectedRevision": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                },
+                "required": [
+                  "candidateId",
+                  "expectedRevision",
+                  "date"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "candidateId": "plan_sample_002",
+                "expectedRevision": 1,
+                "date": "2026-11-07"
+              }
+            },
+            "keep_plan": {
+              "label": "기존 계획 유지",
+              "description": "사용자가 제안을 거절하고 현재 계획을 유지한다. agent는 candidate를 버리고 같은 카드를 amend한다.",
+              "oneShot": true,
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "candidateId": {
+                    "type": "string"
+                  },
+                  "expectedRevision": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date"
+                  }
+                },
+                "required": [
+                  "candidateId",
+                  "expectedRevision",
+                  "date"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "candidateId": "plan_sample_002",
+                "expectedRevision": 1,
+                "date": "2026-11-07"
+              }
+            }
+          }
+        },
+        "variance": {
+          "persona": "ptbook-coach",
+          "aesthetic": "ptbook-ledger-calm",
+          "context": {
+            "app": "ptbook",
+            "useCase": "plan",
+            "logicalId": "plan-A",
+            "layout": "ledger-confirm",
+            "locale": "ko-KR"
+          },
+          "seedPrompt": "오늘 계획표: 현재 계획 행과 제안 계획을 전후 비교로 보여주고 적용/유지 확인을 받는다"
+        },
+        "contractHash": "b29f5042a9acd352",
+        "variantKey": "c6e78f09324971bf",
+        "source": {
+          "kind": "curated"
+        },
+        "generatorProtocolVersion": "draft-2026-09-10",
+        "intent": "오늘 운동 계획표를 행 단위로 보여주고, 제안이 있으면 변경 전후를 비교해 적용 또는 유지를 확인받는 카드"
+      },
+      "codeRef": "daf42bc6746d2bc00262b32f994527639c18c9897bff09e5c25f678213826265.tsx"
+    },
+    {
+      "record": {
+        "schemaVersion": 2,
+        "contract": {
+          "propsSpec": {
+            "description": "ptbook 세트 카드 B. observation.observed가 false면 '관찰 없음'을 그대로 표시한다(영상 분석 미지원). coaching과 next는 agent가 계산한 처방이며 카드는 재계산하지 않는다.",
+            "properties": {
+              "variant": {
+                "description": "논리 variant ID. 항상 set-B.",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "set-B"
+                  ]
+                }
+              },
+              "dataMode": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "live",
+                    "imported",
+                    "sample",
+                    "estimated"
+                  ]
+                }
+              },
+              "status": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "ready",
+                    "loading",
+                    "empty",
+                    "error"
+                  ]
+                }
+              },
+              "statusText": {
+                "schema": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "title": {
+                "description": "첫 답: 다음 세트에 바꿀 한 가지 (예: 다음 세트는 2.5kg 낮추고 무릎 방향만 보세요).",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "maxLength": 120
+                }
+              },
+              "sourceLabel": {
+                "description": "출처 (예: 11/7 14:02 기록 · 오늘 계획 2행).",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "maxLength": 120
+                }
+              },
+              "record": {
+                "description": "방금 기록된 세트. contracts.ts setRecord와 같은 필드.",
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "occurredAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "planRowId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "exercise": {
+                      "type": "string"
+                    },
+                    "kg": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 300
+                    },
+                    "reps": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 30
+                    },
+                    "rpe": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 1,
+                      "maximum": 10
+                    },
+                    "note": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "occurredAt",
+                    "planRowId",
+                    "exercise",
+                    "kg",
+                    "reps",
+                    "rpe",
+                    "note"
+                  ]
+                }
+              },
+              "observation": {
+                "description": "관찰 유무와 관찰 항목. 사용자의 보고(텍스트)만 관찰로 친다. observed false면 items는 비어 있다.",
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "observed": {
+                      "type": "boolean"
+                    },
+                    "items": {
+                      "type": "array",
+                      "maxItems": 3,
+                      "items": {
+                        "type": "string",
+                        "maxLength": 80
+                      }
+                    }
+                  },
+                  "required": [
+                    "observed",
+                    "items"
+                  ]
+                }
+              },
+              "coaching": {
+                "description": "다음 세트에 바꿀 한 가지와 이유.",
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "change": {
+                      "type": "string",
+                      "maxLength": 80
+                    },
+                    "why": {
+                      "type": "string",
+                      "maxLength": 300
+                    }
+                  },
+                  "required": [
+                    "change",
+                    "why"
+                  ]
+                }
+              },
+              "next": {
+                "description": "처방된 다음 세트. cue는 자세 큐 한 줄(없으면 null).",
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "exercise": {
+                      "type": "string"
+                    },
+                    "kg": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 300
+                    },
+                    "reps": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 30
+                    },
+                    "cue": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "exercise",
+                    "kg",
+                    "reps",
+                    "cue"
+                  ]
+                }
+              },
+              "progress": {
+                "description": "오늘 계획 행 기준 진행 (완료 세트/계획 세트). 계획 밖 세트면 null.",
+                "required": true,
+                "schema": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "completedSets": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 30
+                    },
+                    "totalSets": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 30
+                    }
+                  },
+                  "required": [
+                    "completedSets",
+                    "totalSets"
+                  ]
+                }
+              }
+            }
+          },
+          "actionSpec": {
+            "log_next_set": {
+              "label": "이대로 다음 세트 기록",
+              "description": "사용자가 처방된 다음 세트를 수행했다고 보고한다. agent는 세트 기록 도구를 호출하고 결과(completedSets 갱신)로 같은 카드 또는 계획표 카드를 amend한다.",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "planRowId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "exercise": {
+                    "type": "string"
+                  },
+                  "kg": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 300
+                  },
+                  "reps": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 30
+                  },
+                  "rpe": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "minimum": 1,
+                    "maximum": 10
+                  }
+                },
+                "required": [
+                  "planRowId",
+                  "exercise",
+                  "kg",
+                  "reps",
+                  "rpe"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "planRowId": "row_sample_2",
+                "exercise": "백 스쿼트",
+                "kg": 57.5,
+                "reps": 8,
+                "rpe": null
+              }
+            }
+          }
+        },
+        "variance": {
+          "persona": "ptbook-coach",
+          "aesthetic": "ptbook-ledger-calm",
+          "context": {
+            "app": "ptbook",
+            "useCase": "set",
+            "logicalId": "set-B",
+            "layout": "prescription-first",
+            "locale": "ko-KR"
+          },
+          "seedPrompt": "세트 카드 B 다음 세트 처방: 바꿀 한 가지와 중량/횟수를 먼저, 방금 기록은 아래"
+        },
+        "contractHash": "9a2ec961e2956938",
+        "variantKey": "e19b234338d44bda",
+        "source": {
+          "kind": "curated"
+        },
+        "generatorProtocolVersion": "draft-2026-09-10",
+        "intent": "방금 기록한 세트와 다음 세트에 바꿀 한 가지를 보여주고 처방된 다음 세트를 기록하는 카드"
+      },
+      "codeRef": "591753c8706ff2d3d3cb338836307d605d769a869c60ac27604c2045dd8aa6d9.tsx"
+    },
+    {
+      "record": {
+        "schemaVersion": 2,
+        "contract": {
+          "propsSpec": {
+            "description": "ptbook 수면 카드 B. sleep의 null 값은 '기록 없음'으로 표시하고 0으로 위장하지 않는다. recommendation은 agent가 계산한 제안이며 카드는 재계산하지 않는다.",
+            "properties": {
+              "variant": {
+                "description": "논리 variant ID. 항상 sleep-B.",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "sleep-B"
+                  ]
+                }
+              },
+              "dataMode": {
+                "description": "데이터 출처 유형.",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "live",
+                    "imported",
+                    "sample",
+                    "estimated"
+                  ]
+                }
+              },
+              "status": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "ready",
+                    "loading",
+                    "empty",
+                    "error"
+                  ]
+                }
+              },
+              "statusText": {
+                "schema": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "title": {
+                "description": "첫 답: 오늘 강도를 바꿀지 (예: 오늘은 평소 강도의 90%로 가요).",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "maxLength": 120
+                }
+              },
+              "sourceLabel": {
+                "description": "출처와 수집 시각 (예: Healine 11/6 수면 · 11/7 07:10 동기화).",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "maxLength": 120
+                }
+              },
+              "sleep": {
+                "description": "수면 측정값. 단위는 분/퍼센트. 측정 없음은 null.",
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "totalMinutes": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0,
+                      "maximum": 1440
+                    },
+                    "deepMinutes": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0,
+                      "maximum": 1440
+                    },
+                    "remMinutes": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0,
+                      "maximum": 1440
+                    },
+                    "efficiencyPct": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "minimum": 0,
+                      "maximum": 100
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "totalMinutes",
+                    "deepMinutes",
+                    "remMinutes",
+                    "efficiencyPct"
+                  ]
+                }
+              },
+              "recommendation": {
+                "description": "agent가 제안하는 오늘 강도와 근거. intensity가 기본 선택이 되고 사용자가 칩으로 바꿀 수 있다.",
+                "required": true,
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "intensity": {
+                      "type": "string",
+                      "enum": [
+                        "keep",
+                        "lower",
+                        "rest"
+                      ]
+                    },
+                    "label": {
+                      "type": "string",
+                      "maxLength": 60
+                    },
+                    "reason": {
+                      "type": "string",
+                      "maxLength": 300
+                    }
+                  },
+                  "required": [
+                    "intensity",
+                    "label",
+                    "reason"
+                  ]
+                }
+              },
+              "thresholds": {
+                "description": "강도 조정 기준. 있으면 '기준' 줄로 표시한다.",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "minTotalMinutes": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "minEfficiencyPct": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "actionSpec": {
+            "propose_plan": {
+              "label": "이 강도로 오늘 계획 만들기",
+              "description": "사용자가 고른 강도로 오늘 계획 제안을 요청한다. agent는 계획 제안 도구를 호출하고 plan-A 카드로 확인을 받는다.",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sleepDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "intensity": {
+                    "type": "string",
+                    "enum": [
+                      "keep",
+                      "lower",
+                      "rest"
+                    ]
+                  }
+                },
+                "required": [
+                  "sleepDate",
+                  "intensity"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "sleepDate": "2026-11-06",
+                "intensity": "lower"
+              }
+            }
+          }
+        },
+        "variance": {
+          "persona": "ptbook-coach",
+          "aesthetic": "ptbook-ledger-calm",
+          "context": {
+            "app": "ptbook",
+            "useCase": "sleep",
+            "logicalId": "sleep-B",
+            "layout": "metric-intensity-picker",
+            "locale": "ko-KR"
+          },
+          "seedPrompt": "수면 카드 B 오늘 강도부터: 총 수면과 효율을 크게, 강도 선택 칩과 계획 제안 버튼"
+        },
+        "contractHash": "e879e65e8ada24ba",
+        "variantKey": "4a2a00195b9e0dd1",
+        "source": {
+          "kind": "curated"
+        },
+        "generatorProtocolVersion": "draft-2026-09-10",
+        "intent": "어젯밤 수면 측정값을 보여주고 오늘 운동 강도를 고르게 해 계획 제안을 요청하는 카드"
+      },
+      "codeRef": "0734a709c345e13aa95413eb11b3d2b3127a5d9ee2ad4cefc2df332eebe8aed7.tsx"
+    },
+    {
+      "record": {
+        "schemaVersion": 2,
+        "contract": {
+          "propsSpec": {
+            "description": "ptbook 영상 카드 A. clips는 영상 인덱스에 있는 실제 구간만 담는다. 관찰·비교 결과를 넣지 않는다.",
+            "properties": {
+              "variant": {
+                "description": "논리 variant ID. 항상 video-A.",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "video-A"
+                  ]
+                }
+              },
+              "dataMode": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "live",
+                    "imported",
+                    "sample",
+                    "estimated"
+                  ]
+                }
+              },
+              "status": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "ready",
+                    "loading",
+                    "empty",
+                    "error"
+                  ]
+                }
+              },
+              "statusText": {
+                "schema": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "title": {
+                "description": "첫 답: 설명이 시작되는 구간 (예: 무릎 방향 설명은 0:42부터예요).",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "maxLength": 120
+                }
+              },
+              "sourceLabel": {
+                "description": "출처 (예: 영상 인덱스 19구간 · 11/7 기준).",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "maxLength": 120
+                }
+              },
+              "query": {
+                "description": "사용자가 찾는 자세 포인트 (예: 스쿼트 무릎 방향).",
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "maxLength": 80
+                }
+              },
+              "clips": {
+                "description": "참고 구간 목록. 첫 항목이 대표 구간. clipUrl은 시작 초가 포함된 딥링크(없으면 null, 카드는 sourceUrl을 쓴다).",
+                "required": true,
+                "schema": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 3,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "creator": {
+                        "type": "string",
+                        "maxLength": 80
+                      },
+                      "sourceUrl": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "clipUrl": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "startSec": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "endSec": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "label": {
+                        "type": "string",
+                        "maxLength": 80
+                      },
+                      "cue": {
+                        "type": "string",
+                        "maxLength": 160
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "creator",
+                      "sourceUrl",
+                      "clipUrl",
+                      "startSec",
+                      "endSec",
+                      "label",
+                      "cue"
+                    ]
+                  }
+                }
+              },
+              "analysisNote": {
+                "description": "분석 범위 안내. 기본값은 '내 영상 분석은 지원하지 않아요 · 참고 구간만 안내해요'.",
+                "schema": {
+                  "type": "string",
+                  "maxLength": 160
+                }
+              }
+            }
+          },
+          "actionSpec": {
+            "open_clip": {
+              "label": "원본에서 이 구간 열기",
+              "description": "사용자가 참고 구간 링크를 열었다. 링크 이동은 카드가 직접 하고(새 탭), agent는 이 이벤트로 어떤 구간을 봤는지 알고 다음 안내(다음 구간, 세트 복귀)를 이어간다.",
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "clipId": {
+                    "type": "string"
+                  },
+                  "sourceUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "startSec": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "endSec": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "clipId",
+                  "sourceUrl",
+                  "startSec",
+                  "endSec"
+                ],
+                "additionalProperties": false
+              },
+              "example": {
+                "clipId": "clip_sample_01",
+                "sourceUrl": "https://example.invalid/reference-squat",
+                "startSec": 42,
+                "endSec": 71
+              }
+            }
+          }
+        },
+        "variance": {
+          "persona": "ptbook-coach",
+          "aesthetic": "ptbook-ledger-calm",
+          "context": {
+            "app": "ptbook",
+            "useCase": "video",
+            "logicalId": "video-A",
+            "layout": "timeline-clips",
+            "locale": "ko-KR"
+          },
+          "seedPrompt": "영상 카드 A 구간을 콕 집어: 참고 구간 타임라인과 원본 열기 링크, 내 영상 분석 미지원 표시"
+        },
+        "contractHash": "2c46ff7d6a13c009",
+        "variantKey": "60c1fb765224dabc",
+        "source": {
+          "kind": "curated"
+        },
+        "generatorProtocolVersion": "draft-2026-09-10",
+        "intent": "질문한 자세 포인트에 맞는 참고 영상 구간을 시작/종료 초와 cue, 원본 링크로 안내하는 카드"
+      },
+      "codeRef": "dccea1f96da1f3f5e128afd7abd8e91d8c513acb1987a722e055c5548bbf2448.tsx"
+    }
+  ]
+}

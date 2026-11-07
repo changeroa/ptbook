@@ -1,0 +1,23 @@
+{
+  "variant": "sleep-B",
+  "dataMode": "sample",
+  "status": "ready",
+  "title": "오늘은 평소 강도의 90%로 가요",
+  "sourceLabel": "브리프 제공 실측 · 11/6 수면",
+  "sleep": {
+    "date": "2026-11-06",
+    "totalMinutes": 230,
+    "deepMinutes": 68,
+    "remMinutes": 68,
+    "efficiencyPct": 93.51
+  },
+  "recommendation": {
+    "intensity": "lower",
+    "label": "강도 낮춤을 권해요",
+    "reason": "효율은 93.5%로 좋지만 총 수면이 3시간 50분으로 기준 6시간보다 짧아요. 중량을 한 단계 낮추고 세트 수는 유지해요."
+  },
+  "thresholds": {
+    "minTotalMinutes": 360,
+    "minEfficiencyPct": 85
+  }
+}

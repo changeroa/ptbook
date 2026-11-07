@@ -1,186 +1,134 @@
 # ptbook
 
-A guuey agentic app: a code-mode agent, a custom MCP server you can copy to
-add your own tools, and a `ggui` config for generative UI — all runnable
-locally with one command, and deployable to guuey with one more.
+수면을 참고한 오늘 계획을 적용하고, 세트 기록과 다음 행동을 함께 이어가는
+한국어 PT 에이전트입니다. Guuey의 기존 대화·사용자 home·GGUI를 재사용합니다.
 
-## What got scaffolded
+체험: https://app.guuey.com/agent/78537711-e685-469d-b2fe-8bf378b1cdfc
 
+Start Chat으로 시작하세요. 게스트는 같은 대화 안에서 계획·세트·식단을
+이어갈 수 있지만, 원장은 임시 저장이며 재배포 후에는 초기화됩니다.
+
+## 현재 구현
+
+- 수면: 승인된 Healine D1 스냅샷을 owner에게만 조회합니다. 다른 사용자는
+  별도의 체험용 수면 예시를 받습니다.
+- 계획: 초안과 적용된 계획을 분리합니다. 짧은 수면에는 보조운동을 각
+  1세트 줄이는 데모 규칙을 제안하며 사용자가 적용/유지를 선택합니다.
+- 세트: 중복 요청을 한 번만 반영하고 계획 완료 수를 다시 계산합니다.
+- 코칭: 실제 SKT A.X K2가 사용자 보고에 근거한 짧은 한국어 피드백을 만듭니다.
+- 영상 근거: 김성환·짐승철·황철순의 검증된 19개 원본 구간을 검색합니다.
+- 식단: 실제 OpenAI vision이 공개 식사 사진 샘플을 분석합니다.
+  음식·분량 **텍스트** 입력은 A.X K2 경로를 사용합니다.
+  확인 후 기록하고, 같은 식사 수정은 중복 합산하지 않습니다.
+- 스쿼트: 소유자가 제공한 15.59초 영상의 선택 6프레임을 실제 OpenAI로
+  분석한 결과를 캐시했습니다. A.X K2 코칭과 함께 저장된 분석임을 표시합니다.
+- UI: 계획·수면·세트·영상·식단의 대표 GGUI 카드 5개를 사용합니다.
+
+새 사진/영상 업로드는 현재 미지원입니다. 식사 사진은 허용된 공개 샘플,
+영상은 소유자가 승인한 샘플만 지원합니다. 원본 영상과 프레임은 커밋하거나
+공개하지 않습니다. 텍스트 추정과 저장된 분석을 새 이미지 분석으로 표시하지 않습니다.
+
+## 구조
+
+```text
+Guuey Claude Agent SDK
+  ├─ GGUI: 계획 / 수면 / 세트 / 영상 / 식단 카드
+  ├─ ledger: 사용자 home의 날짜별 JSON 저장·재조회
+  └─ Cloudflare Worker MCP /mcp/
+       ├─ D1 DB: owner의 가져온 Healine 수면, SELECT 전용
+       ├─ 상태 입력 → 계산 → nextState 반환
+       ├─ 19개 원본 영상 구간 JSON
+       ├─ OpenAI vision: 공개 식사 사진 / 선택 프레임 분석
+       └─ A.X K2: 한국어 피드백 / 텍스트 영양 추정
 ```
-.
-├── guuey.json          # the deploy contract: agent framework/model, system prompt,
-│                        #   mcpServers (name → colocated source + devPort), ggui config
-├── package.json         # agent deps + the pnpm workspace root (workspaces: mcps/*, web)
-├── src/worker.ts        # your agent code (code-mode worker); build emits ./guuey.worker.js
-├── prompts/system.md    # system prompt, referenced from guuey.json#agent.systemPrompt.file
-├── mcps/todo/           # the "copy-me" custom MCP server — @modelcontextprotocol/sdk,
-│                         #   Streamable HTTP, in-memory todo list, port :6782
-├── ggui/                # ggui.json + blueprints/ — generative-UI config. Generative UI is
-│                         #   opt-in: delete `"ggui": false` from guuey.json#agent.mcpServers
-│                         #   to turn it on (it starts off).
-│                         #   `ggui serve` runs against this locally; `guuey deploy` pushes
-│                         #   generation config + blueprints (the deployed RENDER THEME is
-│                         #   platform data, not this dir — ggui.json#theme is local-preview
-│                         #   only, kept in step with guuey.app.json by `pnpm bootstrap`).
-├── web/                 # the product frontend (Vite + React on @guuey/chat):
-│                         #   landing (widget) · login (guest + BYO-OIDC seam) · home
-│                         #   (status + distribution guide) · the chat surface
-├── guuey.app.json       # frontend/brand config — written by `pnpm bootstrap`
-│                         #   (schema: guuey.app.schema.json; public-safe by design)
-├── theme.json           # the chat theme document (@guuey/chat tokens) — web/ renders it
-│                         #   locally and `pnpm bootstrap -- --link` pushes it to the hosted
-│                         #   app; `mode` + accent follow guuey.app.json, the rest is yours
-├── AGENTS.md            # coding-agent steering; `pnpm bootstrap` maintains the
-│                         #   managed block with this project's real facts
-├── scripts/dev.mjs      # `pnpm dev` orchestrator — boots the whole local stack
-├── scripts/bootstrap.mjs # `pnpm bootstrap` — configure, then `-- --link` to bind
-├── .env.example          # ANTHROPIC_API_KEY / OPENAI_API_KEY for local dev
-└── .mcp.json             # Claude Code convenience wiring (mcp.ggui.ai/dev)
-```
 
-The project root **is** the agent package — `guuey deploy` packs this directory
-directly as the deploy tarball, so `guuey.json` and `src/worker.ts` live at the top
-level rather than nested under a `servers/` or `apps/` folder.
+Worker는 세트·식사를 저장하지 않습니다. 에이전트가 자신의 Guuey home
+`ptbook/days/YYYY-MM-DD.json`을 읽고 nextState를 원자적으로 저장한 뒤
+재조회합니다. 로그인 사용자는 영속, 게스트는 임시 저장입니다.
+동시 다중 writer는 지원하지 않으며 한 활성 쓰기 대화가 전제입니다.
 
-## Quick start
+## MCP 도구
 
-```bash
+`get_sleep`, `get_workout_plan`, `get_today_plan`, `propose_workout_plan`,
+`apply_workout_plan`, `log_set`, `get_recent_sets`, `find_reference_clips`,
+`estimate_meal`, `log_meal`, `get_daily_nutrition`, `set_feedback`,
+`analyze_squat_video`.
+
+13개 모두 실제 배포 endpoint에 curl JSON-RPC 호출로 검증했습니다.
+`analyze_squat_video`는 `sample_id:"owner-squat-20261107"`의 저장된 분석만
+반환하며 그 외 입력에는 `UNSUPPORTED_MEDIA`를 반환합니다. 상태 변경 도구에는
+현재 `state`와 고유 `requestId`를 전달하고, `commitRequired:true`일 때만
+반환 `nextState`를 저장합니다.
+
+## 설치와 검증
+
+```sh
 pnpm install
-pnpm bootstrap               # brand, theme, copy → guuey.app.json + theme.json + AGENTS.md (no account needed;
-                             #   every web page is gated on this, and production builds fail without it)
-cp .env.example .env.local   # done automatically on scaffold if .env.local is absent
-# set ANTHROPIC_API_KEY (or OPENAI_API_KEY, for the openai-agents-sdk template) in .env.local
-pnpm dev
+pnpm typecheck
+pnpm --filter @ptbook/mcp typecheck
+bun test tests mcps/ptbook/tests
+pnpm build
+pnpm --filter @ptbook/web build
+pnpm --filter @ptbook/mcp build
 ```
 
-When the agent is deployed (`npx guuey login && npx guuey deploy`), bind it into the
-frontend: `pnpm bootstrap -- --link` — that records the app id, endpoint,
-widget origin and portal link in `guuey.app.json` and pushes the brand accent
-and `theme.json` (the chat theme) to the platform. `pnpm status` shows the live
-app state; `pnpm bootstrap -- --check`
-prints machine-readable configuration state.
+루트는 Guuey 호스트, `mcps/ptbook`은 별도 Cloudflare Worker입니다.
+Guuey CLI와 Wrangler는 프로젝트 로컬 의존성입니다.
 
-`pnpm dev` (`scripts/dev.mjs`) boots four processes with prefixed, interleaved
-logs. Ctrl-C tears all of them down together.
+```sh
+# 로그인된 계정으로 호스트 배포
+pnpm exec guuey deploy --code
 
-| process      | port  | what                                                                                                                                       |
-| ------------ | ----- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `worker`     | —     | `tsup --watch` — rebuilds `guuey.worker.js` on every save                                                                                  |
-| `guuey dev`  | :6790 | local router: spawns your worker per turn, streams SSE; auto-spawns every `colocated` MCP entry — `mcps/todo` lands on its `devPort` :6782 |
-| `ggui serve` | :6781 | local generative-UI server, over `ggui/`                                                                                                   |
-| `web`        | :6890 | the product frontend (landing/login/home/chat on @guuey/chat)                                                                              |
+# 별도 MCP 배포
+pnpm --filter @ptbook/mcp deploy
 
-The todo MCP still answers on :6782 — it's just a supervised child of
-`guuey dev` now (copy `mcps/todo/` to add your own server; new `colocated`
-entries in `guuey.json` are auto-spawned the same way).
-
-> **If a server's deps carry build scripts** (the classic: `tsx` → esbuild's
-> platform-binary fetch), pnpm ≥11 refuses to run them on a fresh install —
-> `ERR_PNPM_IGNORED_BUILDS` — and the server never boots. Approve the
-> specific packages declaratively in the workspace-root `pnpm-workspace.yaml`
-> (pnpm ignores a `pnpm` field in `package.json` for this): under
-> `allowBuilds:` for pnpm 11 (`esbuild: true`), and under
-> `onlyBuiltDependencies:` for pnpm 10. This scaffold ships both already;
-> add to both when a new dep needs its build step.
-> Don't disable the gate wholesale — it's pnpm's supply-chain protection.
-
-Open http://localhost:6890 to chat with your agent locally.
-
-## Local dev vs. deployed — what's different
-
-`guuey dev` is the open, local equivalent of the pod router that runs your
-worker in production. It mirrors the real spawn/stream contract closely — the
-same normalizer, the same SSE shape — but it deliberately cuts three corners:
-two that only matter once real users and real money are involved, and one
-you should read twice:
-
-- **No sandboxing — read this one twice.** Locally your worker runs as a
-  plain child process: no `bwrap`/gVisor isolation on any platform, it
-  inherits your **full shell environment** (every variable, including
-  credentials unrelated to this agent), and when filesystem layers are
-  bound the host grants the agent shell and file tools **without
-  prompting** (the production jail those tools assume does not exist
-  locally). Net: `guuey dev` runs an LLM-driven agent with unprompted
-  shell access as you, with your env. That's a deliberate dev-trust
-  posture, not an accident — treat the agent like any script you'd run
-  from the internet: run `guuey dev` in a throwaway shell/container with
-  a minimal environment if your agent (or any MCP server it talks to)
-  handles untrusted input. In production every invocation runs inside a
-  gVisor-isolated pod with only its declared environment.
-- **Permissive auth.** `ggui serve --dev-allow-all` accepts any bearer
-  locally. The deployed ggui instance enforces real auth.
-- **No metering or history.** Local runs aren't billed and aren't persisted.
-  Deployed conversations are metered and their history is written to
-  DynamoDB so users can resume a thread.
-
-None of this changes your code — `guuey.json` is the same file in both
-worlds; only how it's resolved differs. Locally, `guuey dev` auto-spawns each
-`colocated` entry on its `devPort` and points the agent at
-`localhost:<devPort>`; deployed, the same server code runs as a supervised
-child inside your agent's pod, reached over the pod's loopback with a
-per-request federated identity. (`hosted` entries deploy to the platform's
-federated URLs; locally they need a `devPort` pointing at a server you run
-yourself, or they're skipped with a warning.)
-
-## Deploying
-
-```bash
-npx guuey login    # device-flow auth; stores a token in ~/.guuey/auth.json
-npx guuey deploy   # ships everything
+# 배포된 에이전트와 연결한 제품 셸
+pnpm bootstrap -- --link
+pnpm --filter @ptbook/web dev
 ```
 
-`guuey deploy` runs four legs, in order, so a hard failure aborts before
-anything user-visible changes:
+Guuey 배포와 Vite 정적 사이트 배포는 별개입니다. 공식 Portal을 제품
+진입점으로 사용하고, 로컬 제품 셸을 호스팅된 사이트라고 소개하지 않습니다.
 
-1. **MCP leg** — deploys each `hosted` entry under `guuey.json#agent.mcpServers`
-   as its own hosted MCP server (build → deploy → registry), then writes the
-   resulting server id back into `guuey.json`. This scaffold has none — the
-   todo MCP is `colocated`, so this leg is a no-op here.
-2. **ggui asset leg** — pushes `ggui/` (generation config, blueprints) to your
-   app's guuey-managed ggui instance.
-3. **Agent leg** — builds `src/worker.ts` into `guuey.worker.js`, packs the
-   project root (including `mcps/`), and deploys it as a gVisor-isolated,
-   scale-to-zero pod. Each `colocated` entry (e.g. `mcps/todo`) is built into
-   the worker image and auto-spawned as a supervised, sandboxed child at pod
-   boot — no separate server, registry row, or write-back.
-4. **Output** — prints your agent's endpoint URL and a Portal deep link.
+## 인증과 비밀정보
 
-Re-running `guuey deploy` converges: unchanged pieces are skipped or reused,
-nothing is duplicated.
+Worker: https://ptbook-mcp.changeroa.workers.dev
 
-## Filesystem + memory
+- `/health`는 개인정보 없는 상태 확인입니다.
+- `/mcp/`는 bearer token 필수입니다.
+- Guuey federation은 RS256, JWKS, issuer, 정확한 audience, expiry,
+  app ID를 검증합니다. owner subject만 D1 계정과 서버에서 연결합니다.
+- 비공개 operator token은 curl 검증 전용이며 Guuey 고객에게 배포하지 않습니다.
+- `PTBOOK_AX_KEY`, `PTBOOK_OPENAI_KEY`, `PTBOOK_ADMIN_TOKEN`,
+  `PTBOOK_APP_ID`, `PTBOOK_OWNER_SUB`, `PTBOOK_HEALINE_SUB`는 Wrangler secrets입니다.
+- `.dev.vars`, `.env*`, 키 파일과 원본 건강 덤프는 커밋하지 않습니다.
 
-Every deployed invoke gets three bound directories — `$GUUEY_HOME_DIR`
-(per-user, durable where the environment enables it, otherwise temporary),
-`$GUUEY_APP_DIR` (read-only, shared), and cwd (session scratch) —
-plain `node:fs`, no wrapper API required. Where the durable filesystem is
-enabled, signed-in users get durable cross-session memory for free (a
-platform-owned prompt tells the model to read/write
-`$GUUEY_HOME_DIR/memories/MEMORY.md`); guests never get durable storage, by
-design. **This recall is `claude-agent-sdk`-only today**
-— openai-agents-sdk and google-adk agents get the three bound directories
-but not the automatic memory-file recall; all-framework support arrives
-with guuey's own memory MCP (a platform tool every framework can call over
-its existing MCP channel). Framework-native memory backends (e.g. ADK's
-Vertex MemoryBank) are unsupported on Guuey — they'd store user data
-outside guuey's deletion boundary. Full contract, code examples, and
-rollout status: the "Your agent's filesystem" section of the guuey
-monorepo's `docs/quickstart.md`, or
-[`@guuey/fs`](https://www.npmjs.com/package/@guuey/fs)'s own README — an
-optional, three-helper sugar layer over the same paths.
+키 값은 프롬프트·props·로그에 넣지 않습니다. A.X 해커톤 키는 제공 조건상
+2026-11-08 00:00 KST 만료 예정입니다.
 
-## Need help?
+## 실제 연결과 예시의 경계
 
-The guuey community is on Discord — https://guuey.com/discord. Bugs in the scaffold or the SDKs: https://github.com/withguuey/guuey-sdks/issues.
+| 항목 | 실제 실행 | 제한 |
+| --- | --- | --- |
+| Healine 수면 | D1 SELECT | 11/1–11/7 덤프, 실제 수면은 11/4–7; live sync 아님 |
+| 게스트 수면 | 분리된 고정 예시 | owner 건강 기록 아님 |
+| 운동·식사 저장 | Guuey 사용자 home | 게스트 임시, 단일 활성 writer |
+| 코칭 | A.X K2 실제 API | 기록 기반, 자세 관찰 아님 |
+| 식사 사진 | OpenAI vision 실제 API | 공개 샘플, 분량·영양 추정 |
+| 텍스트 식단 | A.X K2 실제 API | 텍스트와 분량 기반, 사진 미분석 |
+| 영상 검색 | 제공된 원본 19구간 | 자동자막 기반, 웹 전체 검색 아님 |
+| 스쿼트 분석 | OpenAI 6프레임 결과 캐시 | 소유자 승인 샘플, 새 호출·전체 영상 판정 아님 |
+| 영양 계산 | 서버 4/4/9 계산 | 모델 kcal와 macro 환산 kcal 차이도 표시 |
 
-## How people talk to your agent
+## 데모 순서
 
-- **guuey Portal** — a Telegram-like agent App Store and universal chat
-  client. Once deployed, your agent is reachable from Portal with **zero
-  frontend code** — most builders never need to touch `web/` at all.
-- **`web/`** — ships anyway, because the local dev loop needs a chat surface,
-  and it's a worked example of the bring-your-own-frontend path if you want
-  to embed your agent somewhere Portal doesn't reach.
-- **Future: guuey widgets** — an embeddable web-chat widget for dropping
-  your agent into an existing site is planned as a separate feature; `web/`
-  is designed to make that graduation straightforward when it lands.
+1. "2026-11-07 오늘 하체 계획 짜줘."
+2. 수면 근거와 계획 초안을 확인한 뒤 "적용".
+3. "스쿼트 60kg 8회, RPE 8, 통증 없음"을 데모 기록으로 입력.
+4. "소유자 스쿼트 샘플 분석 보여줘" 후 "발목 관련 설명 영상 찾아줘".
+5. 다음 세트를 기록하고 계획 완료 수 갱신 확인.
+6. "샐러드 사진 샘플 분석해줘" → 확인 → "기록".
+7. 하루 원장과 누적 영양을 다시 읽기.
+
+데모 중량은 사용자의 실제 목표가 아니라 명시적으로 입력한 예시입니다.
+수면 규칙과 식단 추정은 의학적 처방이 아닙니다.

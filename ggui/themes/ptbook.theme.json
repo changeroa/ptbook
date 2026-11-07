@@ -1,0 +1,93 @@
+{
+  "$name": "ptbook",
+  "$description": "ptbook 로컬 프리뷰 테마. design-system/theme.guuey.json(light)과 같은 팔레트. 배포 렌더 테마는 플랫폼 데이터이며 이 파일은 ggui dev/serve 프리뷰에만 쓰인다.",
+  "$metadata": {
+    "font": "Pretendard",
+    "philosophy": "먹색 숫자, 회색 바탕 위 흰 카드, 녹색 accent 하나. 장식 없이 결론부터.",
+    "frameless": true
+  },
+  "color": {
+    "primary": {
+      "500": { "$type": "color", "$value": "#087F5B" }
+    },
+    "success": {
+      "500": { "$type": "color", "$value": "#086879" }
+    },
+    "warning": {
+      "500": { "$type": "color", "$value": "#8C4308" }
+    },
+    "error": {
+      "500": { "$type": "color", "$value": "#B52838" }
+    },
+    "info": {
+      "500": { "$type": "color", "$value": "#6543A3" }
+    },
+    "ground": { "$type": "color", "$value": "#F3F5F7" },
+    "onGround": { "$type": "color", "$value": "#17212B" },
+    "container": { "$type": "color", "$value": "#FFFFFF" },
+    "onContainer": { "$type": "color", "$value": "#17212B" },
+    "sunken": { "$type": "color", "$value": "#E9EEF2" },
+    "onSunken": { "$type": "color", "$value": "#17212B" },
+    "link": { "$type": "color", "$value": "#17212B" },
+    "onPrimary": { "$type": "color", "$value": "#FFFFFF" }
+  },
+  "font": {
+    "family": {
+      "sans": { "$type": "fontFamily", "$value": "\"Pretendard\", -apple-system, BlinkMacSystemFont, \"Apple SD Gothic Neo\", \"Noto Sans KR\", sans-serif" },
+      "mono": { "$type": "fontFamily", "$value": "ui-monospace, \"SF Mono\", Menlo, monospace" }
+    },
+    "weight": {
+      "normal": { "$type": "fontWeight", "$value": "400" },
+      "medium": { "$type": "fontWeight", "$value": "500" },
+      "semibold": { "$type": "fontWeight", "$value": "600" },
+      "bold": { "$type": "fontWeight", "$value": "700" }
+    },
+    "letterSpacing": {
+      "body": { "$type": "dimension", "$value": "-0.02em" },
+      "heading": { "$type": "dimension", "$value": "-0.02em" }
+    }
+  },
+  "spacing": {
+    "1": { "$type": "dimension", "$value": "0.25rem" },
+    "2": { "$type": "dimension", "$value": "0.5rem" },
+    "3": { "$type": "dimension", "$value": "0.75rem" },
+    "4": { "$type": "dimension", "$value": "1rem" },
+    "5": { "$type": "dimension", "$value": "1.25rem" },
+    "6": { "$type": "dimension", "$value": "1.5rem" },
+    "8": { "$type": "dimension", "$value": "2rem" },
+    "10": { "$type": "dimension", "$value": "2.5rem" },
+    "12": { "$type": "dimension", "$value": "3rem" }
+  },
+  "shape": {
+    "radius": {
+      "sm": { "$type": "dimension", "$value": "0.5rem" },
+      "md": { "$type": "dimension", "$value": "0.75rem" },
+      "lg": { "$type": "dimension", "$value": "1rem" },
+      "xl": { "$type": "dimension", "$value": "1.25rem" },
+      "full": { "$type": "dimension", "$value": "9999px" }
+    },
+    "shadow": {
+      "sm": { "$type": "shadow", "$value": "0 0 0 0 transparent" },
+      "md": { "$type": "shadow", "$value": "0 0 0 0 transparent" },
+      "lg": { "$type": "shadow", "$value": "0 0 0 0 transparent" },
+      "xl": { "$type": "shadow", "$value": "0 0 0 0 transparent" }
+    }
+  },
+  "rhythm": {
+    "base": { "$type": "dimension", "$value": "4px" },
+    "section": { "$type": "dimension", "$value": "16px" },
+    "inset": { "$type": "dimension", "$value": "20px" }
+  },
+  "motion": {
+    "transition": {
+      "fast": { "$type": "transition", "$value": "120ms cubic-bezier(0.4, 0, 0.2, 1)" },
+      "normal": { "$type": "transition", "$value": "120ms cubic-bezier(0.4, 0, 0.2, 1)" },
+      "slow": { "$type": "transition", "$value": "120ms cubic-bezier(0.4, 0, 0.2, 1)" }
+    },
+    "duration": {
+      "fast": { "$type": "duration", "$value": "120ms" },
+      "base": { "$type": "duration", "$value": "120ms" },
+      "slow": { "$type": "duration", "$value": "120ms" }
+    }
+  }
+}

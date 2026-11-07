@@ -1,0 +1,45 @@
+{
+  "variant": "set-B",
+  "dataMode": "sample",
+  "status": "ready",
+  "title": "다음 세트는 2.5kg 낮추고 무릎 방향만 보세요",
+  "sourceLabel": "샘플 기록 · 오늘 계획 1행",
+  "record": {
+    "id": "set_sample_01",
+    "occurredAt": "2026-11-07T05:02:00Z",
+    "planRowId": "row_sample_1",
+    "exercise": "백 스쿼트",
+    "kg": 60,
+    "reps": 8,
+    "rpe": 9,
+    "note": "마지막 2회에서 무릎이 안으로 모였어요"
+  },
+  "observation": {
+    "observed": true,
+    "items": [
+      "RPE 9",
+      "무릎 안쪽으로 모임 (사용자 보고)"
+    ]
+  },
+  "coaching": {
+    "change": "2.5kg 낮추고 무릎을 발끝 방향으로",
+    "why": "RPE 9는 계획한 8회를 같은 중량으로 반복하기엔 높아요. 중량을 조금 낮추면 무릎 정렬을 지키면서 횟수를 채울 수 있어요."
+  },
+  "next": {
+    "exercise": "백 스쿼트",
+    "kg": 57.5,
+    "reps": 8,
+    "cue": "무릎은 발끝 방향, 내려갈 때 2초"
+  },
+  "progress": {
+    "completedSets": 2,
+    "totalSets": 4
+  },
+  "flow": "media-links",
+  "mediaLinks": {
+    "uploadUrl": "https://ptbook-mcp.changeroa.workers.dev/upload?token=fixture&kind=squat",
+    "sampleUrl": "https://ptbook-mcp.changeroa.workers.dev/upload?token=fixture&kind=squat&ready=1",
+    "analysisUrl": null,
+    "objectKey": null
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "variant": "video-A",
+  "dataMode": "sample",
+  "status": "ready",
+  "title": "무릎 방향 설명은 0:42부터예요",
+  "sourceLabel": "샘플 인덱스 · 실제 링크 아님",
+  "query": "스쿼트 무릎 방향",
+  "clips": [
+    {
+      "id": "clip_sample_01",
+      "creator": "샘플 제작자 A",
+      "sourceUrl": "https://example.invalid/reference-squat",
+      "clipUrl": null,
+      "startSec": 42,
+      "endSec": 71,
+      "label": "무릎이 안으로 모일 때 고치는 법",
+      "cue": "발끝과 무릎을 같은 방향으로, 발 바깥쪽으로 바닥을 민다"
+    },
+    {
+      "id": "clip_sample_02",
+      "creator": "샘플 제작자 B",
+      "sourceUrl": "https://example.invalid/reference-squat-depth",
+      "clipUrl": null,
+      "startSec": 118,
+      "endSec": 140,
+      "label": "내려가는 깊이와 무릎 정렬",
+      "cue": "허벅지가 수평이 될 때까지, 무릎은 발끝 위"
+    }
+  ]
+}

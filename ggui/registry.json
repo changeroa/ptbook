@@ -1,0 +1,183 @@
+{
+  "schemaVersion": 1,
+  "note": "설계 registry. 논리 ID별 status는 planned로 시작하며, 배포 등록 응답(blueprintId)을 저장하기 전에는 registered로 바꾸지 않는다. contractHash/variantKey/codeRef는 scripts/build-pool.mjs가 로컬에서 계산한 값이다.",
+  "entries": {
+    "plan-A": {
+      "status": "planned",
+      "uiId": "ptbook:plan-A",
+      "manifest": "blueprints/plan-a/ggui.ui.json",
+      "component": "blueprints/plan-a/component.tsx",
+      "fixtures": "blueprints/plan-a/fixtures.json",
+      "intent": "오늘 운동 계획표를 행 단위로 보여주고, 제안이 있으면 변경 전후를 비교해 적용 또는 유지를 확인받는 카드",
+      "variance": {
+        "persona": "ptbook-coach",
+        "aesthetic": "ptbook-ledger-calm",
+        "context": {
+          "app": "ptbook",
+          "useCase": "plan",
+          "logicalId": "plan-A",
+          "layout": "ledger-confirm",
+          "locale": "ko-KR"
+        },
+        "seedPrompt": "오늘 계획표: 현재 계획 행과 제안 계획을 전후 비교로 보여주고 적용/유지 확인을 받는다"
+      },
+      "actions": [
+        "apply_plan",
+        "keep_plan"
+      ],
+      "contractHash": "b29f5042a9acd352",
+      "variantKey": "c6e78f09324971bf",
+      "codeRef": "daf42bc6746d2bc00262b32f994527639c18c9897bff09e5c25f678213826265.tsx",
+      "blueprintId": null,
+      "registeredAt": null
+    },
+    "sleep-B": {
+      "status": "planned",
+      "uiId": "ptbook:sleep-B",
+      "manifest": "blueprints/sleep-b/ggui.ui.json",
+      "component": "blueprints/sleep-b/component.tsx",
+      "fixtures": "blueprints/sleep-b/fixtures.json",
+      "intent": "어젯밤 수면 측정값을 보여주고 오늘 운동 강도를 고르게 해 계획 제안을 요청하는 카드",
+      "variance": {
+        "persona": "ptbook-coach",
+        "aesthetic": "ptbook-ledger-calm",
+        "context": {
+          "app": "ptbook",
+          "useCase": "sleep",
+          "logicalId": "sleep-B",
+          "layout": "metric-intensity-picker",
+          "locale": "ko-KR"
+        },
+        "seedPrompt": "수면 카드 B 오늘 강도부터: 총 수면과 효율을 크게, 강도 선택 칩과 계획 제안 버튼"
+      },
+      "actions": [
+        "propose_plan"
+      ],
+      "contractHash": "e879e65e8ada24ba",
+      "variantKey": "4a2a00195b9e0dd1",
+      "codeRef": "0734a709c345e13aa95413eb11b3d2b3127a5d9ee2ad4cefc2df332eebe8aed7.tsx",
+      "blueprintId": null,
+      "registeredAt": null
+    },
+    "set-B": {
+      "status": "planned",
+      "uiId": "ptbook:set-B",
+      "manifest": "blueprints/set-b/ggui.ui.json",
+      "component": "blueprints/set-b/component.tsx",
+      "fixtures": "blueprints/set-b/fixtures.json",
+      "intent": "방금 기록한 세트와 다음 세트에 바꿀 한 가지를 보여주고 처방된 다음 세트를 기록하는 카드",
+      "variance": {
+        "persona": "ptbook-coach",
+        "aesthetic": "ptbook-ledger-calm",
+        "context": {
+          "app": "ptbook",
+          "useCase": "set",
+          "logicalId": "set-B",
+          "layout": "set-media-links",
+          "locale": "ko-KR"
+        },
+        "seedPrompt": "세트 저장 결과와 다음 행동, 실제 동작하는 영상 업로드와 분석 링크"
+      },
+      "actions": [],
+      "contractHash": "9a2ec961e2956938",
+      "variantKey": "e19b234338d44bda",
+      "codeRef": "591753c8706ff2d3d3cb338836307d605d769a869c60ac27604c2045dd8aa6d9.tsx",
+      "blueprintId": null,
+      "registeredAt": null
+    },
+    "video-A": {
+      "status": "planned",
+      "uiId": "ptbook:video-A",
+      "manifest": "blueprints/video-a/ggui.ui.json",
+      "component": "blueprints/video-a/component.tsx",
+      "fixtures": "blueprints/video-a/fixtures.json",
+      "intent": "질문한 자세 포인트에 맞는 참고 영상 구간을 시작/종료 초와 cue, 원본 링크로 안내하는 카드",
+      "variance": {
+        "persona": "ptbook-coach",
+        "aesthetic": "ptbook-ledger-calm",
+        "context": {
+          "app": "ptbook",
+          "useCase": "video",
+          "logicalId": "video-A",
+          "layout": "timeline-clips",
+          "locale": "ko-KR"
+        },
+        "seedPrompt": "영상 카드 A 구간을 콕 집어: 참고 구간 타임라인과 원본 열기 링크, 내 영상 분석 미지원 표시"
+      },
+      "actions": [
+        "open_clip"
+      ],
+      "contractHash": "2c46ff7d6a13c009",
+      "variantKey": "60c1fb765224dabc",
+      "codeRef": "dccea1f96da1f3f5e128afd7abd8e91d8c513acb1987a722e055c5548bbf2448.tsx",
+      "blueprintId": null,
+      "registeredAt": null
+    },
+    "diet-A": {
+      "status": "planned",
+      "uiId": "ptbook:diet-A",
+      "manifest": "blueprints/diet-a/ggui.ui.json",
+      "component": "blueprints/diet-a/component.tsx",
+      "fixtures": "blueprints/diet-a/fixtures.json",
+      "intent": "오늘 섭취 칼로리 진행률과 탄단지 구성을 보여주고 텍스트 기반 추정을 확인해 식사를 기록하거나 수정하는 카드",
+      "variance": {
+        "persona": "ptbook-coach",
+        "aesthetic": "ptbook-ledger-calm",
+        "context": {
+          "app": "ptbook",
+          "useCase": "diet",
+          "logicalId": "diet-A",
+          "layout": "kcal-first-edit",
+          "locale": "ko-KR"
+        },
+        "seedPrompt": "선 기록 후 수정: 칼로리를 크게, 탄단지와 오늘 누적, 인라인 수정"
+      },
+      "actions": [],
+      "contractHash": "97a2936b28454820",
+      "variantKey": "6832aa9eb43802bd",
+      "codeRef": "81060b86863bdb10f9ea16c6502c7b96998958bd81b458d04f25c44fbea3cf99.tsx",
+      "blueprintId": null,
+      "registeredAt": null
+    },
+    "sleep-A": {
+      "status": "planned",
+      "uiId": null,
+      "note": "미구현 대안 (숫자로 한눈에). 파일 없음."
+    },
+    "sleep-C": {
+      "status": "planned",
+      "uiId": null,
+      "note": "미구현 대안 (밤의 흐름 보기). 실제 stage 구간이 있을 때만."
+    },
+    "set-A": {
+      "status": "planned",
+      "uiId": null,
+      "note": "미구현 대안 (휴식에 집중)."
+    },
+    "set-C": {
+      "status": "planned",
+      "uiId": null,
+      "note": "미구현 대안 (대화로 가볍게)."
+    },
+    "video-B": {
+      "status": "planned",
+      "uiId": null,
+      "note": "미구현 대안 (나란히 비교). 사용자 영상 분석 미지원이라 당분간 보류."
+    },
+    "video-C": {
+      "status": "planned",
+      "uiId": null,
+      "note": "미구현 대안 (자세 체크리스트)."
+    },
+    "diet-B": {
+      "status": "planned",
+      "uiId": null,
+      "note": "미구현 대안 (목표와 나란히)."
+    },
+    "diet-C": {
+      "status": "planned",
+      "uiId": null,
+      "note": "미구현 대안 (먹은 순서대로)."
+    }
+  }
+}

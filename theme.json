@@ -3,26 +3,52 @@
   "mode": "light",
   "colors": {
     "light": {
-      "accent": "#8b7cf6",
-      "onAccent": "#0e1014",
-      "ink": "#111318",
-      "inkMuted": "#5b6270",
-      "surface": "#ffffff",
-      "canvas": "#f7f7f5",
-      "canvasMuted": "#eceded",
-      "error": "#c02a2a"
+      "accent": "#087F5B",
+      "onAccent": "#FFFFFF",
+      "ink": "#17212B",
+      "inkMuted": "#5F6C77",
+      "surface": "#FFFFFF",
+      "canvas": "#F3F5F7",
+      "canvasMuted": "#E9EEF2",
+      "error": "#B52838",
+      "link": "#17212B",
+      "success": "#086879",
+      "warning": "#8C4308",
+      "info": "#6543A3",
+      "cue": "#087F5B"
     },
     "dark": {
-      "accent": "#8b7cf6",
-      "onAccent": "#0e1014",
-      "ink": "#e8e9ee",
-      "inkMuted": "#9aa0ac",
-      "surface": "#1b1e26",
-      "canvas": "#0f1116",
-      "canvasMuted": "#1b1e26",
-      "error": "#ff6b6b"
+      "accent": "#087F5B",
+      "onAccent": "#FFFFFF",
+      "ink": "#F0F4F7",
+      "inkMuted": "#ABB9C5",
+      "surface": "#1C252E",
+      "canvas": "#10161C",
+      "canvasMuted": "#293640",
+      "error": "#FFAFB8",
+      "link": "#F0F4F7",
+      "success": "#91DEEC",
+      "warning": "#FFCA91",
+      "info": "#D4B9FF",
+      "cue": "#82DCB8"
     }
   },
-  "typography": {},
-  "shape": { "radius": "soft", "density": "comfortable" }
+  "typography": {
+    "fontFamily": "\"Pretendard\", -apple-system, BlinkMacSystemFont, \"Apple SD Gothic Neo\", \"Noto Sans KR\", sans-serif"
+  },
+  "shape": {
+    "radius": "soft",
+    "density": "comfortable",
+    "shadow": { "intensity": 0 },
+    "glass": { "opacity": 1, "blur": 0 }
+  },
+  "typeScale": {
+    "display": { "size": "44px", "weight": 700, "tracking": "-0.02em", "leading": 1.1 },
+    "h1": { "size": "28px", "weight": 700, "tracking": "-0.02em", "leading": 1.36 },
+    "h2": { "size": "20px", "weight": 700, "tracking": "-0.02em", "leading": 1.4 },
+    "body": { "size": "16px", "weight": 400, "tracking": "-0.02em", "leading": 1.55 },
+    "label": { "size": "14px", "weight": 600, "tracking": "-0.02em", "leading": 1.5 }
+  },
+  "rhythm": { "base": "4px", "section": "16px", "inset": "20px" },
+  "motion": { "duration": { "fast": "120ms", "base": "120ms", "slow": "120ms" } }
 }

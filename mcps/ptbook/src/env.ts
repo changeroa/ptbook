@@ -1,5 +1,7 @@
 export type Env = {
   readonly DB: D1Database;
+  readonly MEDIA: R2Bucket;
+  readonly PTBOOK_MEDIA_SIGNING_KEY?: string;
   readonly PTBOOK_AX_KEY?: string;
   readonly PTBOOK_OPENAI_KEY?: string;
   readonly PTBOOK_ADMIN_TOKEN?: string;

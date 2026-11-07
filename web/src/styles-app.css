@@ -17,7 +17,13 @@
 .app-body {
   flex: 1;
   min-height: 0;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1024px) {
+  .app-body {
+    grid-template-columns: 320px minmax(0, 1fr);
+  }
 }
 
 /* Tones come from @guuey/agent-layout (the two-panel pair — light AND

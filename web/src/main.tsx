@@ -11,9 +11,7 @@ import { Shell } from "./components/Shell";
 import { AppShell } from "./components/AppShell";
 import { Landing } from "./pages/Landing";
 import { Login } from "./pages/Login";
-import { Home } from "./pages/Home";
 import { Dashboard } from "./pages/Dashboard";
-import { Reports } from "./pages/Reports";
 import { TalkOnMobile } from "./pages/TalkOnMobile";
 
 document.documentElement.dataset.mode = appConfig.theme.mode;
@@ -36,8 +34,6 @@ const router = createBrowserRouter([
     element: <AppShell />,
     children: [
       { index: true, element: <Dashboard /> },
-      { path: "reports", element: <Reports /> },
-      { path: "setup", element: <Home /> },
       { path: "mobile", element: <TalkOnMobile /> },
     ],
   },

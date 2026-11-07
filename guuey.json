@@ -1,13 +1,18 @@
 {
   "schema": "1",
+  "appId": "78537711-e685-469d-b2fe-8bf378b1cdfc",
+  "app": { "name": "ptbook", "builtFor": "personal" },
   "agent": {
     "mode": "code",
     "framework": "claude-agent-sdk",
     "model": "claude-sonnet-5-5",
     "systemPrompt": { "file": "prompts/system.md" },
     "mcpServers": {
-      "ggui": false,
-      "todo": { "kind": "colocated", "source": "./mcps/todo", "devPort": 6782 }
+      "ptbook": {
+        "kind": "external",
+        "url": "https://ptbook-mcp.changeroa.workers.dev/mcp/",
+        "federate": true
+      }
     }
   },
   "ggui": { "configFile": "./ggui/ggui.json" }

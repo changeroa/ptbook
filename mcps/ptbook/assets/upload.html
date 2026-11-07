@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex, nofollow">
+<title>ptbook 업로드</title>
+<style>
+  :root {
+    --accent: #087F5B;
+    --on-accent: #FFFFFF;
+    --accent-ink: #087F5B;
+    --ink: #17212B;
+    --ink-muted: #5F6C77;
+    --surface: #FFFFFF;
+    --canvas: #F3F5F7;
+    --canvas-muted: #E9EEF2;
+    --outline: #D5DCE2;
+    --error: #B52838;
+    --success: #086879;
+    --warning: #8C4308;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --control: 56px;
+    --duration: 120ms;
+    --font: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --accent-ink: #82DCB8;
+      --ink: #F0F4F7;
+      --ink-muted: #ABB9C5;
+      --surface: #1C252E;
+      --canvas: #10161C;
+      --canvas-muted: #293640;
+      --outline: #3A4753;
+      --error: #FFAFB8;
+      --success: #91DEEC;
+      --warning: #FFCA91;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --accent-ink: #82DCB8;
+    --ink: #F0F4F7;
+    --ink-muted: #ABB9C5;
+    --surface: #1C252E;
+    --canvas: #10161C;
+    --canvas-muted: #293640;
+    --outline: #3A4753;
+    --error: #FFAFB8;
+    --success: #91DEEC;
+    --warning: #FFCA91;
+    color-scheme: dark;
+  }
+  :root[data-theme="light"] {
+    --accent-ink: #087F5B;
+    --ink: #17212B;
+    --ink-muted: #5F6C77;
+    --surface: #FFFFFF;
+    --canvas: #F3F5F7;
+    --canvas-muted: #E9EEF2;
+    --outline: #D5DCE2;
+    --error: #B52838;
+    --success: #086879;
+    --warning: #8C4308;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.55;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    background: var(--canvas);
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    -webkit-font-smoothing: antialiased;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  main { max-width: 640px; margin: 0 auto; padding: var(--space-5) var(--space-4) var(--space-8); }
+  .brand { font-size: 14px; font-weight: 600; color: var(--ink-muted); margin: 0 0 var(--space-2); }
+  h1 { font-size: 28px; line-height: 1.36; font-weight: 700; margin: 0 0 var(--space-2); }
+  h2 { font-size: 20px; line-height: 1.4; font-weight: 700; margin: 0; }
+  p { margin: 0; }
+  .lead { color: var(--ink-muted); margin-bottom: var(--space-5); }
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-bottom: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .card[hidden] { display: none; }
+  .step { font-size: 14px; font-weight: 600; color: var(--ink-muted); }
+  .muted { color: var(--ink-muted); font-size: 14px; }
+  .num { font-variant-numeric: tabular-nums; }
+  .btn {
+    appearance: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    min-height: var(--control);
+    padding: 0 var(--space-5);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    transition: opacity var(--duration), transform var(--duration), background-color var(--duration);
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn:focus-visible { outline: 3px solid var(--accent-ink); outline-offset: 2px; }
+  .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+  .btn-primary { background: var(--accent); color: var(--on-accent); }
+  .btn-outline { background: transparent; color: var(--ink); border-color: var(--outline); }
+  .btn-ghost { background: transparent; color: var(--accent-ink); min-height: 44px; width: auto; padding: 0 var(--space-3); }
+  .btn-lg { font-size: 18px; }
+  .picker {
+    border: 2px dashed var(--outline);
+    border-radius: var(--radius-md);
+    background: var(--canvas);
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    text-align: center;
+    cursor: pointer;
+  }
+  .picker:focus-within { outline: 3px solid var(--accent-ink); outline-offset: 2px; }
+  .picker input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+  .picker strong { font-size: 18px; }
+  .preview { width: 100%; max-height: 360px; border-radius: var(--radius-md); background: var(--canvas-muted); object-fit: contain; display: block; }
+  .meta { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); font-size: 14px; color: var(--ink-muted); }
+  .frames { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); list-style: none; margin: 0; padding: 0; }
+  .frames li { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius-sm); overflow: hidden; background: var(--canvas-muted); }
+  .frames img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .frames .at { position: absolute; left: var(--space-1); bottom: var(--space-1); font-size: 12px; font-weight: 600; font-family: var(--mono); color: #FFFFFF; background: rgba(23, 33, 43, .72); padding: 2px 6px; border-radius: 6px; }
+  .frames .pending { display: flex; align-items: center; justify-content: center; height: 100%; font-size: 12px; color: var(--ink-muted); }
+  .progress { height: 8px; border-radius: 999px; background: var(--canvas-muted); overflow: hidden; }
+  .progress > div { height: 100%; width: 0; background: var(--accent); transition: width var(--duration); }
+  .status { display: flex; align-items: center; gap: var(--space-2); font-size: 14px; color: var(--ink-muted); min-height: 24px; }
+  .status[data-tone="error"] { color: var(--error); font-weight: 600; }
+  .status[data-tone="success"] { color: var(--success); font-weight: 600; }
+  .status[data-tone="warning"] { color: var(--warning); font-weight: 600; }
+  .spinner { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--canvas-muted); border-top-color: var(--accent); animation: spin 800ms linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2s; } .btn { transition: none; } }
+  .keyrow { display: flex; gap: var(--space-2); align-items: center; }
+  .keyrow code { flex: 1; font-family: var(--mono); font-size: 14px; background: var(--canvas); border-radius: var(--radius-sm); padding: var(--space-3); border: 1px solid var(--outline); user-select: all; word-break: break-all; }
+  .big { font-size: 44px; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; }
+  .big small { font-size: 14px; font-weight: 600; color: var(--ink-muted); margin-left: var(--space-1); }
+  .macros { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+  .macros div { display: flex; flex-direction: column; }
+  .macros b { font-size: 20px; font-weight: 700; }
+  .macros span { font-size: 14px; color: var(--ink-muted); }
+  .obs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+  .obs li { display: flex; gap: var(--space-3); align-items: baseline; min-height: 44px; padding: var(--space-2) 0; border-bottom: 1px solid var(--canvas-muted); }
+  .obs .t { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--accent-ink); min-width: 3.5em; }
+  .coach { background: var(--canvas); border-radius: var(--radius-md); padding: var(--space-4); }
+  .inline-link { color: var(--accent-ink); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  footer { margin-top: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); color: var(--ink-muted); font-size: 14px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  @media (min-width: 900px) {
+    main { max-width: 760px; padding-top: var(--space-8); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+  }
+</style>
+</head>
+<body>
+<main>
+  <p class="brand">ptbook</p>
+  <h1 id="title">업로드</h1>
+  <p class="lead" id="lead"></p>
+
+  <section class="card" id="invalid" hidden>
+    <h2>링크가 올바르지 않아요</h2>
+    <p class="muted">Portal 대화에서 받은 업로드 링크를 다시 열어 주세요. 링크에는 업로드 종류와 1회용 토큰이 들어 있어요.</p>
+    <a class="btn btn-outline" id="invalid-back" href="https://app.guuey.com/agent/78537711-e685-469d-b2fe-8bf378b1cdfc">Portal로 돌아가기</a>
+  </section>
+
+  <section class="card" id="pick" hidden>
+    <p class="step">1단계 · 파일 선택</p>
+    <label class="picker" id="picker">
+      <input type="file" id="file" aria-describedby="pick-hint">
+      <strong id="pick-title">영상 선택</strong>
+      <span class="muted" id="pick-hint"></span>
+    </label>
+    <div class="status" id="pick-status" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="card" id="review" hidden>
+    <p class="step">2단계 · 확인 후 업로드</p>
+    <video id="video" class="preview" playsinline muted preload="auto" hidden></video>
+    <img id="image" class="preview" alt="선택한 식사 사진" hidden>
+    <div class="meta">
+      <span id="meta-name"></span>
+      <span class="num" id="meta-size"></span>
+      <span class="num" id="meta-duration"></span>
+    </div>
+    <div id="frames-wrap" hidden>
+      <p class="muted">분석에 쓸 6장면 (영상 구간별 가운데 시점)</p>
+      <ul class="frames" id="frames" aria-label="추출한 장면"></ul>
+    </div>
+    <div class="status" id="review-status" role="status" aria-live="polite"></div>
+    <div class="progress" id="progress" hidden><div id="progress-bar"></div></div>
+    <button class="btn btn-primary btn-lg" id="upload" type="button" disabled>업로드</button>
+    <button class="btn btn-outline" id="reselect" type="button">다른 파일 선택</button>
+  </section>
+
+  <section class="card" id="done" hidden>
+    <p class="step">3단계 · 분석</p>
+    <h2 id="done-title">업로드 완료</h2>
+    <p class="muted">저장 키예요. Portal에서 "올렸어"라고 말하면 이 키로 이어서 분석할 수 있어요.</p>
+    <div class="keyrow">
+      <code id="object-key"></code>
+      <button class="btn btn-ghost" id="copy" type="button">복사</button>
+    </div>
+    <div class="status" id="copy-status" role="status" aria-live="polite"></div>
+    <button class="btn btn-primary btn-lg" id="analyze" type="button">분석</button>
+    <div class="status" id="analyze-status" role="status" aria-live="polite"></div>
+    <button class="btn btn-outline" id="new-file" type="button" hidden>다른 파일 올리기</button>
+  </section>
+
+  <section class="card" id="result" hidden>
+    <h2 id="result-title">분석 결과</h2>
+    <div id="result-body"></div>
+  </section>
+
+  <footer>
+    <a class="inline-link" id="back" href="https://app.guuey.com/agent/78537711-e685-469d-b2fe-8bf378b1cdfc">Portal로 돌아가기</a>
+    <span>업로드한 파일은 공개 주소가 생기지 않고, 이 토큰으로만 접근해요.</span>
+  </footer>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  const MiB = 1024 * 1024;
+  const KINDS = {
+    squat: {
+      title: "스쿼트 영상 올리기",
+      lead: "옆이나 사선에서 찍은 스쿼트 영상 1개를 올리면 6장면을 뽑아 분석해요.",
+      pickTitle: "영상 선택",
+      pickHint: "MP4 또는 MOV · 최대 50MiB",
+      accept: "video/mp4,video/quicktime,.mp4,.mov",
+      maxBytes: 50 * MiB,
+      analyzeLabel: "스쿼트 영상 분석",
+      types: ["video/mp4", "video/quicktime"],
+      extensions: [".mp4", ".mov"],
+    },
+    meal: {
+      title: "식사 사진 올리기",
+      lead: "먹은 음식이 다 보이게 찍은 사진 1장을 올리면 칼로리와 탄단지를 추정해요.",
+      pickTitle: "사진 선택",
+      pickHint: "JPEG, PNG, WEBP · 최대 10MiB",
+      accept: "image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp",
+      maxBytes: 10 * MiB,
+      analyzeLabel: "식사 사진 분석",
+      types: ["image/jpeg", "image/png", "image/webp"],
+      extensions: [".jpg", ".jpeg", ".png", ".webp"],
+    },
+  };
+  const FRAME_COUNT = 6;
+  const FRAME_LONG_EDGE = 768;
+  const FRAME_QUALITY = 0.8;
+  const METADATA_TIMEOUT_MS = 15000;
+  const SEEK_TIMEOUT_MS = 8000;
+  const UPLOAD_TIMEOUT_MS = 180000;
+  const ANALYZE_TIMEOUT_MS = 35000;
+
+  const $ = (id) => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  const token = params.get("token") || "";
+  const kind = params.get("kind") || "";
+  const presetKey = (params.get("objectKey") || "").trim();
+  const ready = params.get("ready") === "1" && presetKey.length > 0 && presetKey.length <= 512 && !/\s/.test(presetKey);
+  const autoRun = ready && params.get("auto") === "1";
+  const theme = params.get("theme");
+  if (theme === "dark" || theme === "light") document.documentElement.dataset.theme = theme;
+  const spec = KINDS[kind];
+
+  const state = { file: null, duration: null, frames: [], objectKey: null, busy: false, autoRan: false };
+
+  function setStatus(id, text, tone, spinning) {
+    const el = $(id);
+    el.textContent = "";
+    el.dataset.tone = tone || "";
+    if (spinning) {
+      const s = document.createElement("span");
+      s.className = "spinner";
+      s.setAttribute("aria-hidden", "true");
+      el.appendChild(s);
+    }
+    el.appendChild(document.createTextNode(text || ""));
+  }
+
+  function fmtBytes(n) {
+    if (n >= MiB) return (n / MiB).toLocaleString("ko-KR", { maximumFractionDigits: 1 }) + " MiB";
+    return Math.round(n / 1024).toLocaleString("ko-KR") + " KiB";
+  }
+
+  function fmtClock(sec) {
+    const m = Math.floor(sec / 60);
+    const s = sec - m * 60;
+    return m + ":" + (s < 10 ? "0" : "") + s.toFixed(1);
+  }
+
+  function fileLooksAllowed(file) {
+    const name = (file.name || "").toLowerCase();
+    if (spec.types.includes(file.type)) return true;
+    return spec.extensions.some((ext) => name.endsWith(ext));
+  }
+
+  function withTimeout(promise, ms, message) {
+    let timer;
+    const deadline = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(message)), ms); });
+    return Promise.race([promise, deadline]).finally(() => clearTimeout(timer));
+  }
+
+  function once(target, okEvent, errorEvent) {
+    return new Promise((resolve, reject) => {
+      const onOk = () => { cleanup(); resolve(); };
+      const onErr = () => { cleanup(); reject(new Error(errorEvent)); };
+      const cleanup = () => {
+        target.removeEventListener(okEvent, onOk);
+        if (errorEvent) target.removeEventListener(errorEvent, onErr);
+      };
+      target.addEventListener(okEvent, onOk, { once: true });
+      if (errorEvent) target.addEventListener(errorEvent, onErr, { once: true });
+    });
+  }
+
+  function canvasToJpeg(canvas) {
+    return new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("JPEG 변환에 실패했어요"))), "image/jpeg", FRAME_QUALITY);
+    });
+  }
+
+  async function loadVideoMetadata(video, url) {
+    const ready = once(video, "loadedmetadata", "error");
+    video.src = url;
+    video.load();
+    await withTimeout(ready, METADATA_TIMEOUT_MS, "영상 정보를 15초 안에 읽지 못했어요. 영상이 너무 크거나 브라우저가 지원하지 않는 형식일 수 있어요. iPhone이라면 '호환성 높음' 형식(H.264)으로 저장해서 다시 골라 주세요.").catch((err) => {
+      if (err.message === "error") throw new Error("이 영상은 브라우저가 재생할 수 없어요. iPhone이라면 설정 > 카메라 > 형식에서 '호환성 높음'(H.264)으로 찍거나, MP4로 변환해서 다시 골라 주세요.");
+      throw err;
+    });
+    const duration = video.duration;
+    if (!Number.isFinite(duration) || duration <= 0) throw new Error("영상 길이를 알 수 없어요. 다른 앱으로 한 번 더 저장하거나 다른 영상을 골라 주세요.");
+    if (!video.videoWidth || !video.videoHeight) throw new Error("영상 화면 크기를 읽지 못했어요. 영상 트랙이 없는 파일일 수 있어요.");
+    return duration;
+  }
+
+  async function seekTo(video, sec) {
+    const target = Math.min(Math.max(0, sec), Math.max(0, video.duration - 0.05));
+    if (Math.abs(video.currentTime - target) < 0.01 && video.readyState >= 2) return;
+    const seeked = once(video, "seeked", "error");
+    video.currentTime = target;
+    await withTimeout(seeked, SEEK_TIMEOUT_MS, "장면 " + fmtClock(sec) + " 지점으로 이동하지 못했어요 (8초 초과). 영상을 다시 선택하거나 더 짧게 잘라서 올려 주세요.");
+  }
+
+  async function extractFrames(video, duration) {
+    const scale = Math.min(1, FRAME_LONG_EDGE / Math.max(video.videoWidth, video.videoHeight));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(video.videoWidth * scale));
+    canvas.height = Math.max(1, Math.round(video.videoHeight * scale));
+    const ctx = canvas.getContext("2d");
+    const list = $("frames");
+    list.textContent = "";
+    const slots = [];
+    for (let i = 0; i < FRAME_COUNT; i++) {
+      const li = document.createElement("li");
+      const pending = document.createElement("span");
+      pending.className = "pending";
+      pending.textContent = (i + 1) + "/" + FRAME_COUNT;
+      li.appendChild(pending);
+      list.appendChild(li);
+      slots.push(li);
+    }
+    $("frames-wrap").hidden = false;
+    const frames = [];
+    for (let i = 0; i < FRAME_COUNT; i++) {
+      const atSec = ((i + 0.5) * duration) / FRAME_COUNT;
+      setStatus("review-status", "장면 뽑는 중 " + (i + 1) + "/" + FRAME_COUNT + " · " + fmtClock(atSec), "", true);
+      await seekTo(video, atSec);
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const blob = await canvasToJpeg(canvas);
+      const actualSec = Number(video.currentTime.toFixed(3));
+      frames.push({ blob, atSec: actualSec });
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(blob);
+      img.alt = fmtClock(actualSec) + " 장면";
+      const at = document.createElement("span");
+      at.className = "at";
+      at.textContent = fmtClock(actualSec);
+      slots[i].textContent = "";
+      slots[i].appendChild(img);
+      slots[i].appendChild(at);
+    }
+    return frames;
+  }
+
+  function resetSelection() {
+    const video = $("video");
+    if (video.src) { video.removeAttribute("src"); video.load(); }
+    if (state.objectUrl) URL.revokeObjectURL(state.objectUrl);
+    for (const f of state.frames) if (f.url) URL.revokeObjectURL(f.url);
+    state.file = null; state.duration = null; state.frames = []; state.objectUrl = null;
+    $("frames").textContent = "";
+    $("frames-wrap").hidden = true;
+    $("video").hidden = true;
+    $("image").hidden = true;
+    $("image").removeAttribute("src");
+    $("upload").disabled = true;
+    $("progress").hidden = true;
+    $("progress-bar").style.width = "0";
+    setStatus("review-status", "");
+    $("review").hidden = true;
+    $("pick").hidden = false;
+    $("file").value = "";
+  }
+
+  async function handleFile(file) {
+    if (!file || state.busy) return;
+    setStatus("pick-status", "");
+    if (!fileLooksAllowed(file)) {
+      setStatus("pick-status", kind === "squat" ? "MP4 또는 MOV 영상만 올릴 수 있어요." : "JPEG, PNG, WEBP 사진만 올릴 수 있어요.", "error");
+      $("file").value = "";
+      return;
+    }
+    if (file.size > spec.maxBytes) {
+      setStatus("pick-status", "파일이 " + fmtBytes(file.size) + "예요. " + fmtBytes(spec.maxBytes) + " 이하로 " + (kind === "squat" ? "잘라서" : "줄여서") + " 올려 주세요.", "error");
+      $("file").value = "";
+      return;
+    }
+    state.file = file;
+    state.frames = [];
+    state.objectUrl = URL.createObjectURL(file);
+    $("meta-name").textContent = file.name || (kind === "squat" ? "영상" : "사진");
+    $("meta-size").textContent = fmtBytes(file.size);
+    $("meta-duration").textContent = "";
+    $("pick").hidden = true;
+    $("review").hidden = false;
+    $("upload").disabled = true;
+
+    if (kind === "meal") {
+      $("image").src = state.objectUrl;
+      $("image").hidden = false;
+      setStatus("review-status", "사진을 확인한 뒤 업로드를 눌러 주세요.");
+      $("upload").disabled = false;
+      return;
+    }
+
+    const video = $("video");
+    video.hidden = false;
+    state.busy = true;
+    try {
+      setStatus("review-status", "영상 정보를 읽는 중", "", true);
+      const duration = await loadVideoMetadata(video, state.objectUrl);
+      state.duration = duration;
+      $("meta-duration").textContent = fmtClock(duration) + " · " + video.videoWidth + "×" + video.videoHeight;
+      state.frames = await extractFrames(video, duration);
+      await seekTo(video, state.frames[0].atSec);
+      setStatus("review-status", "6장면을 뽑았어요. 영상과 장면을 함께 올려요.", "success");
+      $("upload").disabled = false;
+    } catch (err) {
+      setStatus("review-status", (err && err.message) || "장면을 뽑지 못했어요.", "error");
+      state.frames = [];
+      $("upload").disabled = true;
+    } finally {
+      state.busy = false;
+    }
+  }
+
+  function postMultipart(url, form, onProgress) {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", url);
+      xhr.timeout = UPLOAD_TIMEOUT_MS;
+      xhr.responseType = "text";
+      xhr.upload.onprogress = (ev) => { if (ev.lengthComputable) onProgress(ev.loaded / ev.total); };
+      xhr.onload = () => resolve({ status: xhr.status, text: xhr.responseText });
+      xhr.onerror = () => reject(new Error("네트워크 오류로 업로드하지 못했어요. 연결을 확인하고 다시 업로드를 눌러 주세요."));
+      xhr.ontimeout = () => reject(new Error("업로드가 3분 안에 끝나지 않았어요. 더 빠른 연결에서 다시 시도해 주세요."));
+      xhr.onabort = () => reject(new Error("업로드가 중단됐어요."));
+      xhr.send(form);
+    });
+  }
+
+  function parseJson(text) {
+    try { return JSON.parse(text); } catch { return null; }
+  }
+
+  function serverError(body, status, fallback) {
+    const message = body && body.error && typeof body.error.message === "string" ? body.error.message : "";
+    return new Error(message || fallback + (status ? " (HTTP " + status + ")" : ""));
+  }
+
+  async function upload() {
+    if (!state.file || state.busy) return;
+    if (kind === "squat" && state.frames.length !== FRAME_COUNT) {
+      setStatus("review-status", "6장면이 아직 준비되지 않았어요. 영상을 다시 선택해 주세요.", "error");
+      return;
+    }
+    state.busy = true;
+    $("upload").disabled = true;
+    $("reselect").disabled = true;
+    $("progress").hidden = false;
+    $("progress-bar").style.width = "0";
+    setStatus("review-status", "업로드 중 0%", "", true);
+    try {
+      const form = new FormData();
+      form.append("file", state.file, state.file.name || (kind === "squat" ? "squat.mp4" : "meal.jpg"));
+      if (kind === "squat") {
+        state.frames.forEach((f, i) => form.append("frame" + i, f.blob, "frame" + i + ".jpg"));
+        form.append("frameTimes", JSON.stringify(state.frames.map((f) => f.atSec)));
+        form.append("duration", String(state.duration));
+      }
+      const res = await postMultipart("/upload?token=" + encodeURIComponent(token), form, (ratio) => {
+        const pct = Math.round(ratio * 100);
+        $("progress-bar").style.width = pct + "%";
+        setStatus("review-status", "업로드 중 " + pct + "%", "", true);
+      });
+      const body = parseJson(res.text);
+      if (res.status < 200 || res.status >= 300 || !body || body.ok !== true || typeof body.objectKey !== "string") {
+        throw serverError(body, res.status, "서버가 업로드를 받지 못했어요");
+      }
+      state.objectKey = body.objectKey;
+      $("result").hidden = true;
+      setStatus("analyze-status", "");
+      showDone(kind === "squat" ? "영상과 6장면을 올렸어요" : "사진을 올렸어요");
+      $("review").hidden = true;
+      $("progress").hidden = true;
+      setStatus("review-status", "");
+      if (kind === "meal") {
+        state.busy = false;
+        await analyze();
+      } else {
+        $("analyze").focus();
+      }
+    } catch (err) {
+      $("progress").hidden = true;
+      setStatus("review-status", ((err && err.message) || "업로드하지 못했어요.") + " 선택한 파일은 그대로 있어요.", "error");
+      $("upload").textContent = "다시 업로드";
+      $("upload").disabled = false;
+    } finally {
+      $("reselect").disabled = false;
+      state.busy = false;
+    }
+  }
+
+  function renderSquat(data) {
+    const body = $("result-body");
+    body.textContent = "";
+    const obs = Array.isArray(data.observations) ? data.observations : [];
+    if (obs.length) {
+      const ul = document.createElement("ul");
+      ul.className = "obs";
+      for (const o of obs) {
+        const li = document.createElement("li");
+        const t = document.createElement("span");
+        t.className = "t";
+        t.textContent = typeof o.atSec === "number" ? fmtClock(o.atSec) : "";
+        const c = document.createElement("span");
+        c.textContent = o.cue || "";
+        li.appendChild(t);
+        li.appendChild(c);
+        ul.appendChild(li);
+      }
+      body.appendChild(ul);
+    }
+    const coaching = data.coaching && typeof data.coaching.text === "string" ? data.coaching.text : "";
+    if (coaching) {
+      const div = document.createElement("div");
+      div.className = "coach";
+      const h = document.createElement("p");
+      h.className = "step";
+      h.textContent = "다음 세트에서";
+      const p = document.createElement("p");
+      p.textContent = coaching;
+      div.appendChild(h);
+      div.appendChild(p);
+      body.appendChild(div);
+    }
+    if (!obs.length && !coaching) {
+      const p = document.createElement("p");
+      p.className = "muted";
+      p.textContent = "분석 결과가 비어 있어요. Portal에서 다시 요청해 주세요.";
+      body.appendChild(p);
+    }
+    $("result-title").textContent = "스쿼트 분석 결과";
+  }
+
+  function macroRow(macros) {
+    const row = document.createElement("div");
+    row.className = "macros";
+    const items = [["탄수화물", macros && macros.carbG], ["단백질", macros && macros.proteinG], ["지방", macros && macros.fatG]];
+    for (const [label, g] of items) {
+      const div = document.createElement("div");
+      const b = document.createElement("b");
+      b.className = "num";
+      b.textContent = typeof g === "number" ? g.toLocaleString("ko-KR", { maximumFractionDigits: 1 }) + "g" : "기록 없음";
+      const s = document.createElement("span");
+      s.textContent = label;
+      div.appendChild(b);
+      div.appendChild(s);
+      row.appendChild(div);
+    }
+    return row;
+  }
+
+  function renderMeal(data) {
+    const body = $("result-body");
+    body.textContent = "";
+    const meal = data.meal || {};
+    const big = document.createElement("p");
+    big.className = "big num";
+    big.textContent = typeof meal.kcal === "number" ? meal.kcal.toLocaleString("ko-KR", { maximumFractionDigits: 0 }) : "기록 없음";
+    if (typeof meal.kcal === "number") {
+      const small = document.createElement("small");
+      small.textContent = "kcal · 이번 식사";
+      big.appendChild(small);
+    }
+    body.appendChild(big);
+    body.appendChild(macroRow(meal.macros));
+    if (meal.label) {
+      const p = document.createElement("p");
+      p.textContent = meal.label;
+      p.style.marginTop = "var(--space-3)";
+      body.appendChild(p);
+    }
+    if (data.daily && typeof data.daily.kcal === "number") {
+      const daily = document.createElement("div");
+      daily.className = "coach";
+      const h = document.createElement("p");
+      h.className = "step";
+      h.textContent = "오늘 누적";
+      const k = document.createElement("p");
+      k.className = "num";
+      k.textContent = data.daily.kcal.toLocaleString("ko-KR", { maximumFractionDigits: 0 }) + " kcal";
+      daily.appendChild(h);
+      daily.appendChild(k);
+      daily.appendChild(macroRow(data.daily.macros));
+      body.appendChild(daily);
+    }
+    $("result-title").textContent = "식사 분석 결과";
+  }
+
+  async function analyze() {
+    if (!state.objectKey || state.busy) return;
+    state.busy = true;
+    $("analyze").disabled = true;
+    $("result").hidden = true;
+    setStatus("analyze-status", "분석 중이에요. 최대 35초 걸려요.", "", true);
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ANALYZE_TIMEOUT_MS);
+    try {
+      let res;
+      try {
+        res = await fetch("/media/analyze?token=" + encodeURIComponent(token), {
+          method: "POST",
+          headers: { "content-type": "application/json", accept: "application/json" },
+          body: JSON.stringify({ objectKey: state.objectKey }),
+          signal: controller.signal,
+          referrerPolicy: "no-referrer",
+          credentials: "same-origin",
+        });
+      } catch (err) {
+        if (err && err.name === "AbortError") throw new Error("35초 안에 분석이 끝나지 않았어요. 잠시 후 다시 눌러 주세요.");
+        throw new Error("네트워크 오류로 분석 요청을 보내지 못했어요. 연결을 확인하고 다시 눌러 주세요.");
+      }
+      const text = await res.text();
+      const body = parseJson(text);
+      if (!res.ok || !body || body.ok !== true || !body.data) throw serverError(body, res.status, "분석에 실패했어요");
+      if (kind === "squat") renderSquat(body.data); else renderMeal(body.data);
+      $("result").hidden = false;
+      setStatus("analyze-status", "분석이 끝났어요.", "success");
+      $("analyze").textContent = spec.analyzeLabel + " 다시";
+    } catch (err) {
+      setStatus("analyze-status", (err && err.message) || "분석에 실패했어요.", "error");
+      $("analyze").textContent = spec.analyzeLabel + " 다시 시도";
+    } finally {
+      clearTimeout(timer);
+      $("analyze").disabled = false;
+      state.busy = false;
+    }
+  }
+
+  function showDone(title) {
+    $("object-key").textContent = state.objectKey || "";
+    $("done-title").textContent = title;
+    $("analyze").textContent = spec.analyzeLabel;
+    $("analyze").disabled = false;
+    $("pick").hidden = true;
+    $("done").hidden = false;
+  }
+
+  function startNewFile() {
+    $("done").hidden = true;
+    $("result").hidden = true;
+    setStatus("analyze-status", "");
+    resetSelection();
+  }
+
+  async function copyKey() {
+    const key = state.objectKey || "";
+    if (!key) return;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(key);
+      } else {
+        const range = document.createRange();
+        range.selectNodeContents($("object-key"));
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        if (!document.execCommand("copy")) throw new Error("copy");
+      }
+      setStatus("copy-status", "복사했어요.", "success");
+    } catch {
+      setStatus("copy-status", "자동 복사가 안 돼요. 키를 길게 눌러 복사해 주세요.", "warning");
+    }
+  }
+
+  function init() {
+    if (!spec || !token) {
+      $("title").textContent = "업로드 링크 확인";
+      $("lead").textContent = "";
+      $("invalid").hidden = false;
+      return;
+    }
+    document.title = "ptbook · " + spec.title;
+    $("title").textContent = spec.title;
+    $("lead").textContent = spec.lead;
+    $("pick-title").textContent = spec.pickTitle;
+    $("pick-hint").textContent = spec.pickHint;
+    $("file").accept = spec.accept;
+    $("pick").hidden = false;
+    $("file").addEventListener("change", (ev) => handleFile(ev.target.files && ev.target.files[0]));
+    $("upload").addEventListener("click", upload);
+    $("reselect").addEventListener("click", resetSelection);
+    $("analyze").addEventListener("click", analyze);
+    $("copy").addEventListener("click", copyKey);
+    $("new-file").addEventListener("click", startNewFile);
+    window.ptbookUpload = { selectFile: handleFile, state };
+    if (ready) {
+      state.objectKey = presetKey;
+      showDone(kind === "squat" ? "올린 영상으로 분석해요" : "올린 사진으로 분석해요");
+      $("new-file").hidden = false;
+      if (autoRun && !state.autoRan) {
+        state.autoRan = true;
+        analyze();
+      }
+    }
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

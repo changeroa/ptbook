@@ -57,6 +57,13 @@ export const dayState = z.strictObject({
   sets: z.array(setRecord).max(30),
   meals: z.array(mealRecord).max(8),
   pendingEstimates: z.array(mealEstimate).max(3),
+  media: z.strictObject({
+    squatKey: z.string().max(200).nullable(),
+    mealKey: z.string().max(200).nullable(),
+  }).default({ squatKey: null, mealKey: null }),
+  views: z.partialRecord(z.enum(["plan-A", "sleep-B", "set-B", "video-A", "diet-A"]), z.strictObject({
+    sessionId: id, resourceUri: z.string().max(1000), blueprintId: z.string().max(120).nullable(),
+  })).default({}),
   requests: z.array(z.strictObject({
     id, operation: z.string().min(1).max(80), recordId: id.nullable(),
   })).max(64),
@@ -104,5 +111,5 @@ export class DomainError extends Error {
 
 export function emptyDay(date: string): DayState {
   return { version: 1, revision: 0, date, plan: null, pendingPlan: null,
-    sets: [], meals: [], pendingEstimates: [], requests: [] };
+    sets: [], meals: [], pendingEstimates: [], requests: [], media: { squatKey: null, mealKey: null }, views: {} };
 }

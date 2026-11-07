@@ -7,7 +7,7 @@ export type Meta = {
   readonly source: string;
   readonly asOf: string;
   readonly warnings: readonly string[];
-  readonly storage: "none";
+  readonly storage: "none" | "durable";
 };
 
 export async function reply<T>(work: () => T | Promise<T>, meta: Meta) {

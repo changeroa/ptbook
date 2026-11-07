@@ -1,0 +1,79 @@
+{
+  "variant": "plan-A",
+  "dataMode": "sample",
+  "status": "ready",
+  "title": "오늘은 하체 3종, 총 부하 10% 낮춰요",
+  "sourceLabel": "샘플 계획 · 11/6 수면 기준",
+  "date": "2026-11-07",
+  "current": {
+    "id": "plan_sample_001",
+    "date": "2026-11-07",
+    "revision": 1,
+    "status": "in_progress",
+    "reason": "지난주 하체 루틴 그대로",
+    "sleepDate": "2026-11-06",
+    "rows": [
+      {
+        "id": "row_sample_1",
+        "exercise": "백 스쿼트",
+        "sets": 4,
+        "targetKg": 60,
+        "targetReps": 8,
+        "completedSets": 2
+      },
+      {
+        "id": "row_sample_2",
+        "exercise": "루마니안 데드리프트",
+        "sets": 3,
+        "targetKg": 50,
+        "targetReps": 10,
+        "completedSets": 0
+      },
+      {
+        "id": "row_sample_3",
+        "exercise": "런지",
+        "sets": 3,
+        "targetKg": null,
+        "targetReps": 12,
+        "completedSets": 0
+      }
+    ]
+  },
+  "candidate": {
+    "id": "plan_sample_002",
+    "date": "2026-11-07",
+    "revision": 1,
+    "status": "draft",
+    "reason": "어젯밤 총 수면 3시간 50분으로 기준(6시간) 아래라 부하를 낮췄어요",
+    "sleepDate": "2026-11-06",
+    "rows": [
+      {
+        "id": "row_sample_1",
+        "exercise": "백 스쿼트",
+        "sets": 4,
+        "targetKg": 55,
+        "targetReps": 8,
+        "completedSets": 2
+      },
+      {
+        "id": "row_sample_2",
+        "exercise": "루마니안 데드리프트",
+        "sets": 3,
+        "targetKg": 45,
+        "targetReps": 10,
+        "completedSets": 0
+      },
+      {
+        "id": "row_sample_3",
+        "exercise": "런지",
+        "sets": 2,
+        "targetKg": null,
+        "targetReps": 12,
+        "completedSets": 0
+      }
+    ]
+  },
+  "confirmation": {
+    "state": "idle"
+  }
+}

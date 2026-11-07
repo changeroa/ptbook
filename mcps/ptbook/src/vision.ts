@@ -22,7 +22,7 @@ export async function visionText(
 ) {
   if (!env.PTBOOK_OPENAI_KEY) throw new DomainError("NOT_CONNECTED", "OpenAI vision key has not been configured.");
   const result = response.parse(await ky.post("https://api.openai.com/v1/responses", {
-    timeout: 30_000, retry: 0,
+    timeout: 25_000, retry: 0,
     headers: { authorization: `Bearer ${env.PTBOOK_OPENAI_KEY}` },
     json: {
       model: env.PTBOOK_VISION_MODEL,
@@ -40,7 +40,7 @@ export async function visionText(
 }
 
 export async function estimateImage(
-  input: { readonly sample_id?: string; readonly image_url?: string; readonly description: string | null },
+  input: { readonly sample_id?: string; readonly image_url?: string; readonly imageData?: string; readonly description: string | null },
   env: Env,
 ) {
   if (input.sample_id !== undefined && input.sample_id !== "salad-demo") {
@@ -49,17 +49,17 @@ export async function estimateImage(
   if (input.image_url !== undefined && input.image_url !== mealSampleUrl) {
     throw new DomainError("UNSUPPORTED_MEDIA", "Only the allowlisted public demo image URL is supported. Use manual correction for your meal.");
   }
-  if (input.sample_id === undefined && input.image_url === undefined && input.description === null) {
+  if (input.sample_id === undefined && input.image_url === undefined && input.imageData === undefined && input.description === null) {
     throw new DomainError("UNSUPPORTED_MEDIA", "Provide a meal description or select salad-demo. File upload is not implemented.");
   }
   const shape = '{"label":string,"kcal":number,"macros":{"carbG":number,"proteinG":number,"fatG":number},"confidence":"low"|"medium","assumptions":string[]}';
   if (!env.PTBOOK_OPENAI_KEY && input.image_url && input.description === null) {
     throw new DomainError("UNSUPPORTED_MEDIA", "Image analysis is unavailable. Describe the food and portions for a text estimate.");
   }
-  const text = env.PTBOOK_OPENAI_KEY && (input.sample_id !== undefined || input.image_url !== undefined)
+  const text = env.PTBOOK_OPENAI_KEY && (input.sample_id !== undefined || input.image_url !== undefined || input.imageData !== undefined)
     ? await visionText({
       prompt: `한국어로 이 샘플 식사 사진을 분석하세요. 음식 중량은 알 수 없으므로 가정과 낮거나 중간 신뢰도를 명시하세요. JSON 객체만 출력: ${shape}. 각 가정은 300자 이하. 사용자 설명: ${input.description ?? "없음"}`,
-      images: [mealSampleUrl],
+      images: [input.imageData ?? mealSampleUrl],
     }, env)
     : await axText({
       system: '사진을 보지 않은 한국어 영양 추정 도우미입니다. 음식과 분량 텍스트로 추정하세요. 응답은 JSON.parse가 파싱 가능한 단일 JSON 객체여야 합니다. 모든 키(특히 macros, carbG, proteinG, fatG)를 반드시 쌍따옴표로 감싸세요. 마크다운과 타입 표기는 금지합니다. 필드: label(문자열, 120자 이하), kcal(숫자), macros(객체: carbG, proteinG, fatG는 숫자), confidence("low" 또는 "medium"), assumptions(최대 8개 문자열 배열, 항목당 300자 이하). label과 assumptions에 텍스트 기반 추정임을 명시하세요. 의학적 처방을 하지 마세요.',
