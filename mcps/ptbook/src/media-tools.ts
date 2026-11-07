@@ -42,7 +42,10 @@ export function registerMediaTools(server: McpServer, context: MediaContext) {
     const state = await loadDay({ db: context.env.DB, identity: context.identity }, date);
     const objectKey = input.objectKey ?? (input.sample_id ? OWNER_SAMPLE_KEY : state.media.squatKey);
     if (!objectKey) return { needsUpload: true, ...await mediaLink(context, { date, kind: "squat" }) };
-    return analyzeMedia(objectKey, context);
+    const analysis = await analyzeMedia(objectKey, context);
+    const upload = await mediaLink(context, { date, kind: "squat" });
+    const ready = await mediaLink(context, { date, kind: "squat", objectKey });
+    return { ...analysis, uploadUrl: upload.url, analysisUrl: `${ready.url}&auto=1` };
   }, meta));
   server.registerTool("analyze_meal_photo", {
     description: "Analyze an uploaded meal photo and immediately record kcal/macros and daily totals. No confirmation step.",

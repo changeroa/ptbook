@@ -1,4 +1,4 @@
-import { Card, Heading, Progress, Row, Stack, Text } from "@ggui-ai/design";
+import { Button, Card, Heading, Progress, Row, Stack, Text } from "@ggui-ai/design";
 
 type Macro = { carbG: number; proteinG: number; fatG: number };
 type Meal = { id: string; label: string; kcal: number; macros: Macro; occurredAt: string; corrected: boolean };
@@ -41,10 +41,10 @@ export default function DietACard(props: DietAProps) {
           {props.target.kcal === null ? <Text size="sm" tone="muted">기본 목표 {fmt(target)}kcal</Text> : null}
         </Stack>
       </>}
-      <a href={props.uploadUrl} target="_blank" rel="noopener noreferrer"
-        style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "56px",
-          borderRadius: "var(--ggui-shape-radius-control)", background: "var(--ggui-color-primary-500)",
-          color: "var(--ggui-color-onPrimary)", textDecoration: "none", fontWeight: 600 }}>식단 사진 올리기</a>
+      <Button variant="primary" size="lg" fullWidth onPress={() => {
+        window.parent.postMessage({ jsonrpc: "2.0", id: crypto.randomUUID(),
+          method: "ui/open-link", params: { url: props.uploadUrl } }, "*");
+      }}>식단 사진 올리기</Button>
     </Stack></Card>
   </div>;
 }

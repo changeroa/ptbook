@@ -5,7 +5,7 @@
  * spacing is a --ggui-* theme token or a design primitive prop.
  */
 import { type ReactNode } from "react";
-import { Badge, Card, Heading, Link, Row, Skeleton, Stack, Text } from "@ggui-ai/design";
+import { Badge, Button, Card, Heading, Row, Skeleton, Stack, Text } from "@ggui-ai/design";
 import { useAction } from "@ggui-ai/wire";
 
 type DataMode = "live" | "imported" | "sample" | "estimated";
@@ -138,15 +138,8 @@ function ClipRow({ clip, primary }: { clip: ReferenceClip; primary: boolean }) {
             <Text size="sm" tone="muted">{clip.creator} · 원본 영상</Text>
           </Stack>
         </Row>
-        {primary ? (
-          <a href={href} target="_blank" rel="noopener noreferrer" style={LINK_BUTTON_STYLE}>
-            원본에서 {fmtClock(clip.startSec)}부터 열기
-          </a>
-        ) : (
-          <Link href={href} external underline="always">
-            원본에서 {fmtClock(clip.startSec)}부터 열기
-          </Link>
-        )}
+        <Button variant={primary ? "primary" : "outline"} size="lg" fullWidth
+          onPress={() => openExternal(href)}>원본에서 {fmtClock(clip.startSec)}부터 열기</Button>
       </Stack>
     </li>
   );
@@ -184,7 +177,7 @@ export default function VideoACard(props: VideoAProps) {
             <ClipRow key={clip.id} clip={clip} primary={i === 0} />
           ))}
         </ol>
-        <a href={props.analysisUrl} target="_blank" rel="noopener noreferrer" style={LINK_BUTTON_STYLE}>스쿼트 영상 분석</a>
+        <Button variant="primary" size="lg" fullWidth onPress={() => openExternal(props.analysisUrl)}>스쿼트 영상 분석</Button>
       </Stack>
     );
   }
@@ -199,4 +192,9 @@ export default function VideoACard(props: VideoAProps) {
       </Card>
     </div>
   );
+}
+
+function openExternal(url: string) {
+  window.parent.postMessage({ jsonrpc: "2.0", id: crypto.randomUUID(),
+    method: "ui/open-link", params: { url } }, "*");
 }

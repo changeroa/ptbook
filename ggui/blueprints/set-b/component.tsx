@@ -5,7 +5,7 @@
  * spacing is a --ggui-* theme token or a design primitive prop.
  */
 import { type ReactNode } from "react";
-import { Badge, Card, Heading, Progress, Row, Skeleton, Stack, Text } from "@ggui-ai/design";
+import { Badge, Button, Card, Heading, Progress, Row, Skeleton, Stack, Text } from "@ggui-ai/design";
 
 type DataMode = "live" | "imported" | "sample" | "estimated";
 type Status = "ready" | "loading" | "empty" | "error";
@@ -142,6 +142,7 @@ function ReadyBody({ record, observation, coaching, next, progress, mediaLinks }
         <Stack gap="md">
           <Row gap="sm" align="center" justify="between" wrap>
             <Heading level={3}>다음 세트</Heading>
+            {record.rpe !== null ? <Text size="sm">RPE {fmt(record.rpe)}</Text> : null}
             {kgDelta !== 0 ? (
               <Badge variant={kgDelta < 0 ? "warning" : "success"} size="sm" pill>
                 <span style={NUM_STYLE}>{kgDelta > 0 ? "+" : ""}{fmt(kgDelta)}kg</span>
@@ -152,47 +153,25 @@ function ReadyBody({ record, observation, coaching, next, progress, mediaLinks }
             <Metric value={fmt(next.kg)} unit="kg" label={next.exercise} />
             <Metric value={String(next.reps)} unit="회" label="목표 횟수" />
           </Row>
-          <Text size="sm" weight="semibold">{next.cue ?? coaching.change}</Text>
-          <a href={mediaLinks.analysisUrl ?? mediaLinks.uploadUrl} target="_blank" rel="noopener noreferrer"
-            style={{ ...PRIMARY_ACTION_STYLE, display: "flex", alignItems: "center", justifyContent: "center",
-              borderRadius: "var(--ggui-shape-radius-control)", background: "var(--ggui-color-primary-500)",
-              color: "var(--ggui-color-onPrimary)", textDecoration: "none", fontWeight: 600 }}>
+          <Text size="sm" weight="semibold" style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{next.cue ?? coaching.change}</Text>
+          <Button variant="primary" size="lg" fullWidth
+            onPress={() => openExternal(mediaLinks.analysisUrl ?? mediaLinks.uploadUrl)}>
             스쿼트 영상 분석
-          </a>
+          </Button>
           <Row gap="lg" wrap>
-            <a href={mediaLinks.uploadUrl} target="_blank" rel="noopener noreferrer">영상 올리기</a>
-            <a href={mediaLinks.sampleUrl} target="_blank" rel="noopener noreferrer">내 스쿼트 영상</a>
+            <Button variant="ghost" onPress={() => openExternal(mediaLinks.uploadUrl)}>영상 올리기</Button>
+            <Button variant="ghost" onPress={() => openExternal(mediaLinks.sampleUrl)}>내 스쿼트 영상</Button>
           </Row>
         </Stack>
       </Card>
 
-      <Stack gap="sm">
-        <Text size="xs" tone="muted" caps>방금 기록</Text>
-        <Row gap="sm" align="center" justify="between" wrap>
-          <Text weight="semibold">{record.exercise}</Text>
-        </Row>
-        <Text style={NUM_STYLE}>
-          {fmt(record.kg)}kg × {record.reps}회{record.rpe !== null ? ` · RPE ${fmt(record.rpe)}` : ""}
-        </Text>
-      </Stack>
-
-      {progress ? (
-        <Stack gap="xs">
-          <Row gap="sm" align="center" justify="between">
-            <Text size="sm" tone="muted">오늘 계획 진행</Text>
-            <Text size="sm" weight="semibold" style={NUM_STYLE}>{progress.completedSets}/{progress.totalSets} 세트</Text>
-          </Row>
-          <Progress
-            value={Math.min(progress.completedSets, progress.totalSets)}
-            max={progress.totalSets}
-            size="md"
-            variant={progress.completedSets >= progress.totalSets ? "success" : "default"}
-            label="오늘 계획 진행"
-          />
-        </Stack>
-      ) : null}
     </Stack>
   );
+}
+
+function openExternal(url: string) {
+  window.parent.postMessage({ jsonrpc: "2.0", id: crypto.randomUUID(),
+    method: "ui/open-link", params: { url } }, "*");
 }
 
 export default function SetBCard(props: SetBProps) {

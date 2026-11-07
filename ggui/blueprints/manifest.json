@@ -236,19 +236,19 @@
             "logicalId": "diet-A",
             "layout": "kcal-first-edit",
             "locale": "ko-KR",
-            "presentation": "concise-v2"
+            "presentation": "concise-v3-host-links"
           },
           "seedPrompt": "선 기록 후 수정: 칼로리를 크게, 탄단지와 오늘 누적, 인라인 수정"
         },
         "contractHash": "559eaf036472bfe4",
-        "variantKey": "22d3bd148f00390c",
+        "variantKey": "f0789d49bb68fb2e",
         "source": {
           "kind": "curated"
         },
         "generatorProtocolVersion": "draft-2026-09-10",
         "intent": "오늘 섭취 칼로리 진행률과 탄단지 구성을 보여주고 텍스트 기반 추정을 확인해 식사를 기록하거나 수정하는 카드"
       },
-      "codeRef": "945ae283316dcfd085cc9042e895c99be4287e755ab6f14bffa7ae25d9ce7936.tsx"
+      "codeRef": "efbd808152fe08221f2b14b499f4eddb4b53ca0606cf5095e440d1a4f0bc18b9.tsx"
     },
     {
       "record": {
@@ -879,19 +879,19 @@
             "logicalId": "set-B",
             "layout": "set-media-links",
             "locale": "ko-KR",
-            "presentation": "concise-v2"
+            "presentation": "concise-v3-host-links"
           },
           "seedPrompt": "세트 저장 결과와 다음 행동, 실제 동작하는 영상 업로드와 분석 링크"
         },
         "contractHash": "86cbb68e098aa19f",
-        "variantKey": "cb97a644ae40f075",
+        "variantKey": "3a55de049063fe6d",
         "source": {
           "kind": "curated"
         },
         "generatorProtocolVersion": "draft-2026-09-10",
         "intent": "방금 기록한 세트와 다음 세트에 바꿀 한 가지를 보여주고 처방된 다음 세트를 기록하는 카드"
       },
-      "codeRef": "05741e42e907aae4c3187d91ef9bdd5173eedfed9c17e5bfcd079434dc265d8b.tsx"
+      "codeRef": "099443345698074756f9bbe95e1a813f5616075ffa467ced3d938453393becac.tsx"
     },
     {
       "record": {
@@ -1258,19 +1258,19 @@
             "logicalId": "video-A",
             "layout": "timeline-clips",
             "locale": "ko-KR",
-            "presentation": "concise-v2"
+            "presentation": "concise-v3-host-links"
           },
           "seedPrompt": "영상 카드 A 구간을 콕 집어: 참고 구간 타임라인과 원본 열기 링크, 내 영상 분석 미지원 표시"
         },
         "contractHash": "631726764553b31d",
-        "variantKey": "bb816cf4511cfc8a",
+        "variantKey": "e1b939cfbad38de9",
         "source": {
           "kind": "curated"
         },
         "generatorProtocolVersion": "draft-2026-09-10",
         "intent": "질문한 자세 포인트에 맞는 참고 영상 구간을 시작/종료 초와 cue, 원본 링크로 안내하는 카드"
       },
-      "codeRef": "63065f1db542d90597d6d2f00a541ad9de881acd6ac49c8ba0761319d9f37a90.tsx"
+      "codeRef": "2553c356a0fe52a7bccc79394ffe7c03cc7fac4df42ddd8ad133935f97f57377.tsx"
     }
   ]
 }

@@ -20,6 +20,7 @@ import {
 import { claudeToolRules } from "@guuey/config";
 import { loadAgent, systemPrompt, mcpEndpoints, withHistory } from "./agent-config.js";
 import { createLedger } from "./ledger.js";
+import { terminalReply } from "./turn-output.js";
 
 /**
  * The model credential (guuey#2139). A platform launch delivers it privately
@@ -197,11 +198,16 @@ await serveNative(
     let result = "";
     const messages = (async () => {
       for await (const message of q) {
-        emit.native(JSON.parse(JSON.stringify(message)));
         if (message.type === "result") {
-          if (message.subtype === "success") result = message.result;
+          const terminal = terminalReply(message);
+          result = terminal.text;
+          if (terminal.fallback) {
+            console.error(JSON.stringify({ event: "PTBOOK_TERMINAL_FALLBACK", subtype: message.subtype }));
+            emit.text(result);
+          }
+          if (terminal.forwardNative) emit.native(JSON.parse(JSON.stringify(message)));
           endInput();
-        }
+        } else emit.native(JSON.parse(JSON.stringify(message)));
       }
     })();
     try {
@@ -223,8 +229,19 @@ await serveNative(
     }
     send = true;
     openGate();
-    await messages;
-    endInput();
+    try {
+      await messages;
+    } catch (error) {
+      console.error(JSON.stringify({ event: "PTBOOK_STREAM_FAILURE",
+        name: error instanceof Error ? error.name : typeof error }));
+      q.close();
+      result = terminalReply({ subtype: "error_during_execution" }).text;
+      emit.text(result);
+    } finally { endInput(); }
+    if (!result.trim()) {
+      result = terminalReply({ subtype: "success", result }).text;
+      emit.text(result);
+    }
     return result;
   },
   { framework: "claude-agent-sdk", sdkName: "@anthropic-ai/claude-agent-sdk" }
