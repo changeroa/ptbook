@@ -1,0 +1,28 @@
+{
+  "name": "ptbook",
+  "mode": "light",
+  "colors": {
+    "light": {
+      "accent": "#8b7cf6",
+      "onAccent": "#0e1014",
+      "ink": "#111318",
+      "inkMuted": "#5b6270",
+      "surface": "#ffffff",
+      "canvas": "#f7f7f5",
+      "canvasMuted": "#eceded",
+      "error": "#c02a2a"
+    },
+    "dark": {
+      "accent": "#8b7cf6",
+      "onAccent": "#0e1014",
+      "ink": "#e8e9ee",
+      "inkMuted": "#9aa0ac",
+      "surface": "#1b1e26",
+      "canvas": "#0f1116",
+      "canvasMuted": "#1b1e26",
+      "error": "#ff6b6b"
+    }
+  },
+  "typography": {},
+  "shape": { "radius": "soft", "density": "comfortable" }
+}

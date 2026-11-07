@@ -1,0 +1,14 @@
+{
+  "schema": "1",
+  "agent": {
+    "mode": "code",
+    "framework": "claude-agent-sdk",
+    "model": "claude-sonnet-5-5",
+    "systemPrompt": { "file": "prompts/system.md" },
+    "mcpServers": {
+      "ggui": false,
+      "todo": { "kind": "colocated", "source": "./mcps/todo", "devPort": 6782 }
+    }
+  },
+  "ggui": { "configFile": "./ggui/ggui.json" }
+}

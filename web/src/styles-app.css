@@ -1,0 +1,141 @@
+/* agentic-app shell — split sidebar + fullscreen-swap canvas. Loaded after
+   styles.css; only shell-specific rules live here. */
+
+/* guuey#429: the lib root is viewport-pinned (100dvh + overflow hidden) —
+   the shell fills IT; a min-height:100vh here would overflow the pinned
+   root and re-open the page-scroll hole the lib just closed. */
+.app-shell {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The lib's AgentModeShell grid carries this class; the app states its own
+   column width (app-tier override of the lib's minmax default). Display
+   comes from the lib sheet. */
+.app-body {
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: 320px 1fr;
+}
+
+/* Tones come from @guuey/agent-layout (the two-panel pair — light AND
+   dark ride the lib's mode-aware tokens); the app keeps its structure. */
+.sidebar {
+  border-right: 1px solid var(--line);
+}
+
+.sidebar-top {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  padding: 16px;
+}
+
+.sidebar-menus {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  gap: 2px;
+  flex: 1;
+}
+
+.sidebar-menus a {
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: var(--fg-soft);
+  text-decoration: none;
+}
+
+.sidebar-menus a.active {
+  background: var(--bg);
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.agent-rail {
+  /* Explicit: the app's fixed rail height wins over the lib's flex:1
+     default (deterministic, not load-order luck). */
+  flex: 0 0 auto;
+  min-height: 0;
+  height: 46vh;
+  border-top: 1px solid var(--line);
+}
+
+.rail-chat {
+  flex: 1;
+  min-height: 0;
+}
+
+.canvas-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.canvas-view-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--line);
+  font-weight: 600;
+}
+
+.canvas-view-mount {
+  flex: 1;
+  min-height: 0;
+}
+
+.dock-logout {
+  margin-top: 4px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--fg-soft);
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.canvas {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.canvas .page {
+  max-width: 880px;
+}
+
+.agent-canvas {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  padding: 16px;
+}
+
+.mobile-page {
+  text-align: center;
+}
+
+.qr {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px;
+  background: #fff;
+}

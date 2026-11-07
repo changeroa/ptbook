@@ -1,0 +1,25 @@
+{
+  "name": "ptbook",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "bootstrap": "node scripts/bootstrap.mjs",
+    "status": "guuey apps get && guuey agent status",
+    "build": "tsup",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.282",
+    "@guuey/config": "0.34.0",
+    "@guuey/worker": "0.34.0"
+  },
+  "devDependencies": {
+    "@ggui-ai/cli": "0.29.0",
+    "@guuey/cli": "0.34.0",
+    "tsup": "^8.5.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0"
+  }
+}
