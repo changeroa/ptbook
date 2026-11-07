@@ -4,3 +4,12 @@ dist/
 .env.local.*.tmp
 guuey.worker.js
 .guuey-dev/
+.dev.vars
+.dev.vars.*
+.env
+.env.*
+!.env.example
+.wrangler/
+coverage/
+evidence/private/
+*.key
