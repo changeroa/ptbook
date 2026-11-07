@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/hero.jpg" alt="ptbook" width="100%" /></p>
+
 <h1 align="center">ptbook</h1>
 
 <p align="center"><strong>진짜 PT해주는 에이전트.</strong><br />오늘 계획부터 마지막 세트, 식사 기록까지.</p>
